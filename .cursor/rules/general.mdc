@@ -1,0 +1,10 @@
+---
+description: Follow these rules for every request.
+globs: 
+---
+
+- we are building a slack clone
+- Find the steps in [project-steps.md](mdc:project-steps.md) 
+- work on whatever step(s) I tell you to work on and only work on those steps at once
+- once those steps are done, mark as completed
+- Then stop, I will give you further instructions
