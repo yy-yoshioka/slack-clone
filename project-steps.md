@@ -1,7 +1,7 @@
 # Implementation Plan for SlackClone
 
 ## Database Schema Setup
-- [ ] Step 1: Define schema for users and profiles
+- [x] Step 1: Define schema for users and profiles
   - **Task**: Create schema definitions for users and user profiles using Drizzle ORM
   - **Files**:
     - `db/schema/users.ts`: User and profile schema definitions
@@ -9,7 +9,7 @@
     - `db/db.ts`: Update to include the new schema
   - **User Instructions**: Ensure your Postgres database is set up and the DATABASE_URL environment variable is in your .env.local file
 
-- [ ] Step 2: Define schema for workspaces and channels
+- [x] Step 2: Define schema for workspaces and channels
   - **Task**: Create schema definitions for workspaces and channels
   - **Files**:
     - `db/schema/workspaces.ts`: Workspace schema definition
@@ -17,7 +17,7 @@
     - `db/schema/index.ts`: Update to include new schemas
   - **Step Dependencies**: Step 1
 
-- [ ] Step 3: Define schema for messages and threads
+- [x] Step 3: Define schema for messages and threads
   - **Task**: Create schema definitions for messages, threads, and reactions
   - **Files**:
     - `db/schema/messages.ts`: Message schema definition
@@ -26,7 +26,7 @@
     - `db/schema/index.ts`: Update to include new schemas
   - **Step Dependencies**: Step 2
 
-- [ ] Step 4: Define schema for file storage
+- [x] Step 4: Define schema for file storage
   - **Task**: Create schema definitions for file storage and associations with messages and channels
   - **Files**:
     - `db/schema/files.ts`: File storage schema definition
