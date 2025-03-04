@@ -56,7 +56,7 @@
   - **User Instructions**: Run `npx shadcn-ui@latest add form button input dropdown-menu` to add the required UI components
 
 ## Core UI Components
-- [ ] Step 7: Set up UI components
+- [x] Step 7: Set up UI components
   - **Task**: Install and configure necessary Shadcn UI components
   - **Files**:
     - `components/ui/button.tsx`: Button component
@@ -65,7 +65,7 @@
     - `components/ui/dropdown-menu.tsx`: Dropdown menu component
   - **User Instructions**: Run `npx shadcn-ui@latest add button avatar dialog dropdown-menu` to install components
 
-- [ ] Step 8: Create app layout and main navigation
+- [x] Step 8: Create app layout and main navigation
   - **Task**: Implement the main app layout and navigation components
   - **Files**:
     - `app/layout.tsx`: Update root layout component

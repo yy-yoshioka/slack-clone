@@ -1,10 +1,9 @@
 "use server";
-import { supabase } from "./supabase";
+import { createServerSupabaseClient } from "./supabase";
 import { db } from "@/db/db";
 import { users } from "@/db/schema/users";
 import { profiles } from "@/db/schema/users";
 import { eq } from "drizzle-orm";
-import { getSupabaseBrowserClient } from "./supabase";
 
 export type SignInCredentials = {
   email: string;
@@ -17,12 +16,8 @@ export type SignUpCredentials = SignInCredentials & {
 
 // Sign in with email and password
 export async function signInWithPassword(credentials: SignInCredentials) {
-  const { email, password } = credentials;
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.auth.signInWithPassword(credentials);
 
   if (error) {
     throw new Error(error.message);
@@ -36,6 +31,7 @@ export async function signUpWithPassword(credentials: SignUpCredentials) {
   const { email, password, fullName } = credentials;
 
   // Create the auth user in Supabase
+  const supabase = await createServerSupabaseClient();
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
     password,
@@ -77,6 +73,7 @@ export async function signUpWithPassword(credentials: SignUpCredentials) {
 
 // Sign out
 export async function signOut() {
+  const supabase = await createServerSupabaseClient();
   const { error } = await supabase.auth.signOut();
 
   if (error) {
@@ -88,7 +85,7 @@ export async function signOut() {
 
 // Reset password
 export async function resetPassword(email: string) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = await createServerSupabaseClient();
   const redirectURL = new URL(
     "/auth/update-password",
     process.env.NEXT_PUBLIC_APP_URL
@@ -105,6 +102,7 @@ export async function resetPassword(email: string) {
 
 // Get current user
 export async function getCurrentUser() {
+  const supabase = await createServerSupabaseClient();
   const { data } = await supabase.auth.getUser();
   return data.user;
 }
