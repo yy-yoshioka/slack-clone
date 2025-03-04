@@ -10,7 +10,7 @@ export default async function ChannelPage({
 }: {
   params: { workspaceId: string; channelId: string };
 }) {
-  const { workspaceId, channelId } = params;
+  const { workspaceId, channelId } = await Promise.resolve(params);
 
   const user = await getCurrentUser();
   if (!user) {

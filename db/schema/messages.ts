@@ -11,6 +11,9 @@ export const messages = pgTable("messages", {
     .references(() => channels.id, { onDelete: "cascade" })
     .notNull(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+  parentMessageId: uuid("parent_message_id").references(() => messages.id, {
+    onDelete: "cascade",
+  }),
   isThreadParent: boolean("is_thread_parent").default(false).notNull(),
   isEdited: boolean("is_edited").default(false).notNull(),
   isPinned: boolean("is_pinned").default(false).notNull(),
@@ -19,15 +22,21 @@ export const messages = pgTable("messages", {
 });
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
-  channel: one(channels, {
-    fields: [messages.channelId],
-    references: [channels.id],
-  }),
   user: one(users, {
     fields: [messages.userId],
     references: [users.id],
   }),
-  threadMessages: many(threadMessages),
+  channel: one(channels, {
+    fields: [messages.channelId],
+    references: [channels.id],
+  }),
+  parentMessage: one(messages, {
+    fields: [messages.parentMessageId],
+    references: [messages.id],
+  }),
+  replies: many(messages, {
+    relationName: "threadReplies",
+  }),
   reactions: many(reactions),
 }));
 

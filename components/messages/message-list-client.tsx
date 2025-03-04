@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { MessageItem } from "@/components/messages/message-item";
+import { MessageThreadObserver } from "@/components/messages/message-thread-observer";
+import { getMessageReplyCount } from "@/lib/actions/message-actions";
 
 type Message = {
   id: string;
@@ -10,12 +12,14 @@ type Message = {
   isEdited: boolean;
   isPinned: boolean;
   isThreadParent: boolean;
+  replyCount?: number;
   user: {
     id: string;
     name: string | null;
     email: string | null;
     imageUrl: string | null;
   };
+  parentMessageId?: string;
 };
 
 type MessageListClientProps = {
@@ -53,6 +57,8 @@ export function MessageListClient({
           workspaceId={workspaceId}
           channelId={channelId}
           currentUserId={currentUserId}
+          replyCount={message.replyCount}
+          parentMessageId={message.parentMessageId}
         />
       ))}
     </div>

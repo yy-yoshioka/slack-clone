@@ -46,6 +46,8 @@ type MessageItemProps = {
   workspaceId: string;
   channelId: string;
   currentUserId: string;
+  replyCount?: number;
+  parentMessageId?: string;
 };
 
 export function MessageItem({
@@ -59,6 +61,8 @@ export function MessageItem({
   workspaceId,
   channelId,
   currentUserId,
+  replyCount,
+  parentMessageId,
 }: MessageItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
@@ -187,11 +191,31 @@ export function MessageItem({
           )}
 
           <div className="flex items-center gap-2 mt-2">
-            {isThreadParent && (
+            {isThreadParent ? (
               <Link href={`/${workspaceId}/${channelId}/thread/${id}`}>
-                <Button variant="ghost" size="sm" className="h-6 text-xs">
-                  <MessageSquare className="h-3 w-3 mr-1" />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <MessageSquare className="h-3.5 w-3.5 mr-1" />
                   View thread
+                  {replyCount && replyCount > 0 && (
+                    <span className="ml-1 bg-gray-200 dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs">
+                      {replyCount}
+                    </span>
+                  )}
+                </Button>
+              </Link>
+            ) : parentMessageId ? null : (
+              <Link href={`/${workspaceId}/${channelId}/thread/${id}`}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800"
+                >
+                  <MessageSquare className="h-3.5 w-3.5 mr-1" />
+                  Reply in thread
                 </Button>
               </Link>
             )}

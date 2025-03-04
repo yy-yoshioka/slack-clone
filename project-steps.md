@@ -102,12 +102,13 @@
     - `app/(main)/[workspaceId]/[channelId]/page.tsx`: Updated channel page
   - **Step Dependencies**: Step 10
 
-- [ ] Step 12: Implement thread discussions
-  - **Task**: Create thread reply UI and functionality
+- [x] Step 12: Implement thread discussions
+  - **Task**: Add thread reply functionality to messages
   - **Files**:
+    - `db/schema/messages.ts`: Update schema to support thread replies
+    - `lib/actions/thread-actions.ts`: Server actions for thread management
+    - `components/threads/thread-reply.tsx`: Reply input component
     - `components/threads/thread-view.tsx`: Thread view component
-    - `components/threads/thread-reply.tsx`: Thread reply component
-    - `lib/actions/thread-actions.ts`: Server actions for threads
     - `app/(main)/[workspaceId]/[channelId]/thread/[messageId]/page.tsx`: Thread page
   - **Step Dependencies**: Step 11
 

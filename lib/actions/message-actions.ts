@@ -4,7 +4,7 @@ import { db } from "@/db/db";
 import { messages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { eq, and, desc, sql, count } from "drizzle-orm";
 
 export type MessageFormValues = {
   content: string;
@@ -52,28 +52,37 @@ export async function createMessage(
 
 export async function getMessages(channelId: string) {
   try {
-    const messages = await db.query.messages.findMany({
-      where: (messages, { eq }) => eq(messages.channelId, channelId),
-      orderBy: (messages, { desc }) => [desc(messages.createdAt)],
+    // First, get all top-level messages
+    const channelMessages = await db.query.messages.findMany({
+      where: (messages, { eq, isNull }) =>
+        and(
+          eq(messages.channelId, channelId),
+          isNull(messages.parentMessageId) // Only get top-level messages, not replies
+        ),
+      orderBy: [desc(messages.createdAt)],
       with: {
-        user: {
-          with: {
-            profile: true,
-          },
-        },
+        user: true,
       },
     });
 
-    // Transform the data to match the expected format
-    return messages.map((message) => ({
-      ...message,
-      user: {
-        id: message.user.id,
-        name: message.user.profile?.displayName || message.user.email,
-        email: message.user.email,
-        imageUrl: message.user.profile?.avatarUrl,
-      },
-    }));
+    // Then, for each message, count its replies separately
+    const messagesWithCounts = await Promise.all(
+      channelMessages.map(async (message) => {
+        // Count replies for this message
+        const replyCount = await db
+          .select({ count: count() })
+          .from(messages)
+          .where(eq(messages.parentMessageId, message.id))
+          .then((result) => result[0].count);
+
+        return {
+          ...message,
+          replyCount,
+        };
+      })
+    );
+
+    return messagesWithCounts;
   } catch (error) {
     console.error("Failed to fetch messages:", error);
     return [];
@@ -197,5 +206,19 @@ export async function editMessage(messageId: string, data: MessageFormValues) {
       success: false,
       error: error instanceof Error ? error.message : "Failed to edit message",
     };
+  }
+}
+
+export async function getMessageReplyCount(messageId: string) {
+  try {
+    const result = await db
+      .select({ count: count() })
+      .from(messages)
+      .where(eq(messages.parentMessageId, messageId));
+
+    return result[0].count;
+  } catch (error) {
+    console.error("Failed to get message reply count:", error);
+    return 0;
   }
 }
