@@ -35,7 +35,7 @@
   - **User Instructions**: Set up a Supabase Storage bucket for file uploads
 
 ## Authentication Setup
-- [ ] Step 5: Set up Supabase authentication
+- [x] Step 5: Set up Supabase authentication
   - **Task**: Configure Supabase client for authentication
   - **Files**:
     - `lib/supabase.ts`: Supabase client configuration
@@ -43,15 +43,17 @@
     - `.env.local`: Add Supabase URL and anon key
   - **User Instructions**: Create a new Supabase project and add the Project URL and anon key to `.env.local`
 
-- [ ] Step 6: Create authentication UI components
+- [x] Step 6: Create authentication UI components
   - **Task**: Create sign-in, sign-up, and password reset components using Shadcn UI
   - **Files**:
     - `components/auth/sign-in-form.tsx`: Sign-in form component
     - `components/auth/sign-up-form.tsx`: Sign-up form component
     - `components/auth/reset-password-form.tsx`: Password reset form component
+    - `components/auth/logout-button.tsx`: Logout button component
+    - `components/layout/user-menu.tsx`: User account menu
     - `app/auth/page.tsx`: Authentication page
   - **Step Dependencies**: Step 5
-  - **User Instructions**: Run `npx shadcn-ui@latest add form button input` to add the required UI components
+  - **User Instructions**: Run `npx shadcn-ui@latest add form button input dropdown-menu` to add the required UI components
 
 ## Core UI Components
 - [ ] Step 7: Set up UI components

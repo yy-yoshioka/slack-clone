@@ -1,20 +1,12 @@
-/*
-<ai_context>
-Initializes the database connection and schema for the app.
-</ai_context>
-*/
-
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-// Check if we have the required environment variables
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
+// サーバーコンポーネントでのみ実行されるようにする
+if (typeof window !== "undefined") {
+  throw new Error("このモジュールはサーバーサイドでのみ使用できます");
 }
 
-// Create a postgres connection
-const connectionString = process.env.DATABASE_URL;
-const client = postgres(connectionString);
+const queryClient = postgres(process.env.DATABASE_URL!, { max: 1 });
+const db = drizzle(queryClient);
 
-// Create a drizzle instance using the postgres connection
-export const db = drizzle(client);
+export { db };
