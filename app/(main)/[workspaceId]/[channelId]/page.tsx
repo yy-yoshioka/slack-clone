@@ -2,27 +2,31 @@ import { notFound, redirect } from "next/navigation";
 import { getWorkspaceById } from "@/lib/actions/workspace-actions";
 import { getChannelById } from "@/lib/actions/channel-actions";
 import { getCurrentUser } from "@/lib/auth";
+import { MessageInput } from "@/components/messages/message-input";
+import { MessageList } from "@/components/messages/message-list";
 
 export default async function ChannelPage({
   params,
 }: {
   params: { workspaceId: string; channelId: string };
 }) {
-  const user = await getCurrentUser();
+  const { workspaceId, channelId } = params;
 
+  const user = await getCurrentUser();
   if (!user) {
     redirect("/auth/sign-in");
   }
 
-  const workspace = await getWorkspaceById(params.workspaceId);
+  const [workspace, channel] = await Promise.all([
+    getWorkspaceById(workspaceId),
+    getChannelById(channelId),
+  ]);
 
   if (!workspace) {
     notFound();
   }
 
-  const channel = await getChannelById(params.channelId);
-
-  if (!channel || channel.workspaceId !== params.workspaceId) {
+  if (!channel || channel.workspaceId !== workspaceId) {
     notFound();
   }
 
@@ -37,18 +41,10 @@ export default async function ChannelPage({
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4">
-        {/* Messages will be displayed here */}
-        <div className="text-center py-8 text-gray-500">
-          This is the beginning of the #{channel.name} channel
-        </div>
-      </div>
+      <MessageList channelId={channelId} workspaceId={workspaceId} />
 
       <div className="border-t pt-4">
-        {/* Message input will go here */}
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-3">
-          <p className="text-gray-500 text-sm">Message input coming soon...</p>
-        </div>
+        <MessageInput channelId={channelId} workspaceId={workspaceId} />
       </div>
     </div>
   );

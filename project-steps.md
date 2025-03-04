@@ -92,15 +92,15 @@
   - **Step Dependencies**: Step 9
 
 ## Chat and Messaging Features
-- [ ] Step 11: Implement basic messaging functionality
-  - **Task**: Create message input and message list components
+- [x] Step 11: Implement basic messaging functionality
+  - **Task**: Create components for sending and displaying messages in channels
   - **Files**:
-    - `components/messages/message-input.tsx`: Message input component
-    - `components/messages/message-list.tsx`: Message list component
-    - `components/messages/message-item.tsx`: Individual message component
     - `lib/actions/message-actions.ts`: Server actions for messages
-    - `app/(main)/[workspaceId]/[channelId]/page.tsx`: Channel page
-  - **Step Dependencies**: Steps 3, 10
+    - `components/messages/message-input.tsx`: Message input component
+    - `components/messages/message-item.tsx`: Message display component
+    - `components/messages/message-list.tsx`: List of messages
+    - `app/(main)/[workspaceId]/[channelId]/page.tsx`: Updated channel page
+  - **Step Dependencies**: Step 10
 
 - [ ] Step 12: Implement thread discussions
   - **Task**: Create thread reply UI and functionality
