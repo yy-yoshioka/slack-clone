@@ -75,7 +75,7 @@
   - **Step Dependencies**: Steps 6, 7
 
 ## Workspace and Channel Features
-- [ ] Step 9: Implement workspace creation and management
+- [x] Step 9: Implement workspace creation and management
   - **Task**: Create workspace creation form and management UI
   - **Files**:
     - `app/(main)/workspaces/create/page.tsx`: Workspace creation page
@@ -83,7 +83,7 @@
     - `lib/actions/workspace-actions.ts`: Server actions for workspaces
   - **Step Dependencies**: Steps 2, 8
 
-- [ ] Step 10: Implement channel creation and management
+- [x] Step 10: Implement channel creation and management
   - **Task**: Create channel creation and management UI components
   - **Files**:
     - `components/channels/channel-form.tsx`: Channel creation form
