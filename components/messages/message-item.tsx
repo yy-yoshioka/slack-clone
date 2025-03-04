@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +27,8 @@ import {
 } from "@/lib/actions/message-actions";
 import { toast } from "sonner";
 import Link from "next/link";
+import { MessageReactions } from "@/components/messages/message-reactions";
+import { getReactionCounts } from "@/lib/actions/reaction-actions";
 
 type User = {
   id: string;
@@ -48,6 +50,7 @@ type MessageItemProps = {
   currentUserId: string;
   replyCount?: number;
   parentMessageId?: string;
+  reactionsLastUpdated?: number;
 };
 
 export function MessageItem({
@@ -63,11 +66,13 @@ export function MessageItem({
   currentUserId,
   replyCount,
   parentMessageId,
+  reactionsLastUpdated,
 }: MessageItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(content);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
+  const [reactions, setReactions] = useState<any>({});
 
   const isCurrentUserAuthor = user?.id === currentUserId;
   const initials = user?.name
@@ -76,6 +81,34 @@ export function MessageItem({
         .map((n) => n[0])
         .join("")
     : "?";
+
+  useEffect(() => {
+    async function loadReactions() {
+      const reactionData = await getReactionCounts(id);
+
+      // Mark reactions the current user has made
+      Object.keys(reactionData).forEach((emoji) => {
+        const userIds = reactionData[emoji].users.map((u) => u.id);
+        reactionData[emoji].hasReacted = userIds.includes(currentUserId);
+      });
+
+      setReactions(reactionData);
+    }
+
+    loadReactions();
+  }, [id, currentUserId, reactionsLastUpdated]);
+
+  const handleReactionUpdate = async () => {
+    const reactionData = await getReactionCounts(id);
+
+    // Mark reactions the current user has made
+    Object.keys(reactionData).forEach((emoji) => {
+      const userIds = reactionData[emoji].users.map((u) => u.id);
+      reactionData[emoji].hasReacted = userIds.includes(currentUserId);
+    });
+
+    setReactions(reactionData);
+  };
 
   const handlePin = async () => {
     setIsPinning(true);
@@ -219,6 +252,12 @@ export function MessageItem({
                 </Button>
               </Link>
             )}
+            <MessageReactions
+              messageId={id}
+              reactions={reactions}
+              currentUserId={currentUserId}
+              onReactionUpdate={handleReactionUpdate}
+            />
             <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

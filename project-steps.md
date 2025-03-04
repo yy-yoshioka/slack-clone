@@ -112,14 +112,15 @@
     - `app/(main)/[workspaceId]/[channelId]/thread/[messageId]/page.tsx`: Thread page
   - **Step Dependencies**: Step 11
 
-- [ ] Step 13: Add emoji reactions to messages
+- [x] Step 13: Add emoji reactions to messages
   - **Task**: Implement emoji picker and reaction functionality
   - **Files**:
-    - `components/messages/emoji-picker.tsx`: Emoji picker component
-    - `components/messages/reaction-list.tsx`: Message reactions component
+    - `components/messages/add-reaction.tsx`: Emoji picker component
+    - `components/messages/message-reactions.tsx`: Message reactions component
     - `lib/actions/reaction-actions.ts`: Server actions for reactions
+    - `db/schema/reactions.ts`: Reactions database schema
   - **Step Dependencies**: Step 11
-  - **User Instructions**: Install an emoji picker package with `npm install emoji-mart @emoji-mart/data @emoji-mart/react`
+  - **User Instructions**: Implemented using simple emoji list without external picker
 
 ## File Sharing and Management
 - [ ] Step 14: Implement file upload and attachment

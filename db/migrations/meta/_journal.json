@@ -15,6 +15,13 @@
       "when": 1741084165330,
       "tag": "0001_bright_sentry",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1741090606054,
+      "tag": "0002_thankful_inertia",
+      "breakpoints": true
     }
   ]
 }

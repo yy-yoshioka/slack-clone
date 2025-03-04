@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { MessageItem } from "@/components/messages/message-item";
 import { MessageThreadObserver } from "@/components/messages/message-thread-observer";
 import { getMessageReplyCount } from "@/lib/actions/message-actions";
+import { useChannel } from "ably/react";
 
 type Message = {
   id: string;
@@ -20,6 +21,7 @@ type Message = {
     imageUrl: string | null;
   };
   parentMessageId?: string;
+  reactionsLastUpdated?: number;
 };
 
 type MessageListClientProps = {
@@ -37,10 +39,36 @@ export function MessageListClient({
 }: MessageListClientProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
+  const { channel } = useChannel("reactions");
+
   useEffect(() => {
     // Update messages when initialMessages changes
     setMessages(initialMessages);
   }, [initialMessages]);
+
+  useEffect(() => {
+    const handleReactionUpdate = async (message: any) => {
+      const { messageId } = message.data;
+      // Find the message and update its reactions
+      const updatedMessages = [...messages];
+      const messageIndex = updatedMessages.findIndex((m) => m.id === messageId);
+
+      if (messageIndex !== -1) {
+        // Trigger the message component to refresh its reactions
+        updatedMessages[messageIndex] = {
+          ...updatedMessages[messageIndex],
+          reactionsLastUpdated: Date.now(), // Add this timestamp to force refresh
+        };
+        setMessages(updatedMessages);
+      }
+    };
+
+    channel.subscribe("reaction.update", handleReactionUpdate);
+
+    return () => {
+      channel.unsubscribe("reaction.update", handleReactionUpdate);
+    };
+  }, [messages, channel]);
 
   return (
     <div className="flex flex-col-reverse">

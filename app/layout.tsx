@@ -1,14 +1,23 @@
+"use client";
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import * as Ably from "ably";
+import { AblyProvider, ChannelProvider } from "ably/react";
+
+const client = new Ably.Realtime({
+  key: process.env.NEXT_PUBLIC_ABLY_API_KEY,
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "SlackClone",
-  description: "A modern messaging app inspired by Slack",
-};
+// メタデータはサーバーコンポーネントでのみ使用可能なので削除
+// export const metadata: Metadata = {
+//   title: "SlackClone",
+//   description: "A modern messaging app inspired by Slack",
+// };
 
 export default function RootLayout({
   children,
@@ -18,8 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {children}
-        <Toaster />
+        <AblyProvider client={client}>
+          <ChannelProvider channelName="reactions">
+            {children}
+            <Toaster />
+          </ChannelProvider>
+        </AblyProvider>
       </body>
     </html>
   );
