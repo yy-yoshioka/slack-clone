@@ -1,202 +1,111 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import {
-  Hash,
-  Plus,
-  ChevronDown,
-  ChevronRight,
-  Settings,
-  Home,
-  Users,
-} from "lucide-react";
+import { Plus, Home, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { ChannelList } from "@/components/channels/channel-list";
 
-interface SidebarProps {
-  workspaces: {
-    id: string;
-    name: string;
-    channels: {
-      id: string;
-      name: string;
-    }[];
-  }[];
-  currentWorkspaceId?: string;
+interface Workspace {
+  id: string;
+  name: string;
 }
 
-export function Sidebar({ workspaces = [], currentWorkspaceId }: SidebarProps) {
+interface Channel {
+  id: string;
+  name: string;
+  isPrivate: boolean;
+}
+
+interface SidebarProps {
+  workspaces: Workspace[];
+  currentWorkspaceId?: string;
+  channels?: Channel[];
+}
+
+export function Sidebar({
+  workspaces,
+  currentWorkspaceId,
+  channels = [],
+}: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const [expandedWorkspaces, setExpandedWorkspaces] = useState<
-    Record<string, boolean>
-  >({});
-
-  const toggleWorkspace = (workspaceId: string) => {
-    setExpandedWorkspaces((prev) => ({
-      ...prev,
-      [workspaceId]: !prev[workspaceId],
-    }));
-  };
-
-  const currentWorkspace = workspaces.find(
-    (workspace) => workspace.id === currentWorkspaceId
-  );
 
   return (
-    <div className="flex flex-col h-full border-r bg-gray-50 dark:bg-gray-900">
-      <div className="p-4 border-b">
-        <Link href="/">
-          <h1 className="text-xl font-bold flex items-center">
-            <span>SlackClone</span>
-          </h1>
-        </Link>
+    <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
+      <div className="p-3 border-b border-sidebar-border">
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-lg font-medium"
+          onClick={() => router.push("/")}
+        >
+          SlackClone
+        </Button>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-2">
-          <div className="space-y-1">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                className={cn("w-full justify-start", {
-                  "bg-gray-200 dark:bg-gray-800": pathname === "/",
-                })}
-                size="sm"
-              >
-                <Home className="mr-2 h-4 w-4" />
-                Home
-              </Button>
-            </Link>
-
-            <Link href="/workspaces">
-              <Button
-                variant="ghost"
-                className={cn("w-full justify-start", {
-                  "bg-gray-200 dark:bg-gray-800": pathname === "/workspaces",
-                })}
-                size="sm"
-              >
-                <Users className="mr-2 h-4 w-4" />
-                Workspaces
-              </Button>
-            </Link>
-          </div>
+        <div className="px-3 py-2">
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "w-full justify-start my-1",
+                pathname === "/" && "bg-sidebar-accent"
+              )}
+            >
+              <Home className="mr-2 h-4 w-4" />
+              Home
+            </Button>
+          </Link>
 
           {workspaces.length > 0 && (
             <div className="mt-6">
-              <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 px-2 mb-2">
-                Workspaces
-              </h2>
-              <div className="space-y-1">
+              <h3 className="text-xs font-semibold px-3 py-2">WORKSPACES</h3>
+              <div className="space-y-[2px]">
                 {workspaces.map((workspace) => (
-                  <div key={workspace.id} className="space-y-1">
+                  <Link key={workspace.id} href={`/${workspace.id}`}>
                     <Button
                       variant="ghost"
-                      className="w-full justify-start"
                       size="sm"
-                      onClick={() => toggleWorkspace(workspace.id)}
-                    >
-                      {expandedWorkspaces[workspace.id] ? (
-                        <ChevronDown className="mr-2 h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="mr-2 h-4 w-4" />
+                      className={cn(
+                        "w-full justify-start",
+                        pathname.startsWith(`/${workspace.id}`) &&
+                          "bg-sidebar-accent"
                       )}
+                    >
+                      <Users className="mr-2 h-4 w-4" />
                       {workspace.name}
                     </Button>
-
-                    {expandedWorkspaces[workspace.id] && (
-                      <div className="pl-4 space-y-1">
-                        <Link href={`/${workspace.id}`}>
-                          <Button
-                            variant="ghost"
-                            className={cn(
-                              "w-full justify-start text-gray-600 dark:text-gray-400",
-                              {
-                                "bg-gray-200 dark:bg-gray-800":
-                                  pathname === `/${workspace.id}`,
-                              }
-                            )}
-                            size="sm"
-                          >
-                            General
-                          </Button>
-                        </Link>
-
-                        {workspace.channels.map((channel) => (
-                          <Link
-                            key={channel.id}
-                            href={`/${workspace.id}/${channel.id}`}
-                          >
-                            <Button
-                              variant="ghost"
-                              className={cn(
-                                "w-full justify-start text-gray-600 dark:text-gray-400",
-                                {
-                                  "bg-gray-200 dark:bg-gray-800":
-                                    pathname ===
-                                    `/${workspace.id}/${channel.id}`,
-                                }
-                              )}
-                              size="sm"
-                            >
-                              <Hash className="mr-2 h-4 w-4" />
-                              {channel.name}
-                            </Button>
-                          </Link>
-                        ))}
-
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start text-gray-600 dark:text-gray-400"
-                          size="sm"
-                          onClick={() =>
-                            router.push(`/${workspace.id}/create-channel`)
-                          }
-                        >
-                          <Plus className="mr-2 h-4 w-4" />
-                          Add Channel
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                  </Link>
                 ))}
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start text-gray-600 dark:text-gray-400 mt-2"
-                  size="sm"
-                  onClick={() => router.push("/workspaces/create")}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Workspace
-                </Button>
               </div>
             </div>
           )}
+
+          <div className="mt-4 mb-2">
+            <Link href="/workspaces/create">
+              <Button size="sm" className="w-full">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Workspace
+              </Button>
+            </Link>
+          </div>
         </div>
+
+        {currentWorkspaceId && (
+          <div className="mt-6 px-2">
+            <ChannelList channels={channels} workspaceId={currentWorkspaceId} />
+          </div>
+        )}
       </ScrollArea>
 
-      <div className="p-4 border-t mt-auto">
-        <div className="flex flex-col gap-2">
-          <Link href="/settings">
-            <Button variant="ghost" className="w-full justify-start" size="sm">
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
-            </Button>
-          </Link>
-          <LogoutButton
-            variant="ghost"
-            className="w-full justify-start"
-            size="sm"
-          />
-        </div>
+      <div className="p-3 mt-auto border-t border-sidebar-border">
+        <LogoutButton className="w-full" />
       </div>
     </div>
   );

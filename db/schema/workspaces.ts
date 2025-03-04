@@ -18,12 +18,12 @@ export const workspaces = pgTable("workspaces", {
 export const workspaceMembers = pgTable("workspace_members", {
   id: uuid("id").primaryKey().defaultRandom(),
   workspaceId: uuid("workspace_id")
-    .references(() => workspaces.id, { onDelete: "cascade" })
+    .references(() => workspaces.id)
     .notNull(),
   userId: uuid("user_id")
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => users.id)
     .notNull(),
-  role: varchar("role", { length: 50 }).notNull().default("member"), // admin, member, guest
+  role: varchar("role", { length: 50 }).notNull().default("member"),
   joinedAt: timestamp("joined_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

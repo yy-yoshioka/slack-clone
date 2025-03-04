@@ -17,11 +17,7 @@ export const channels = pgTable("channels", {
   workspaceId: uuid("workspace_id")
     .references(() => workspaces.id, { onDelete: "cascade" })
     .notNull(),
-  creatorId: uuid("creator_id").references(() => users.id, {
-    onDelete: "set null",
-  }),
   isPrivate: boolean("is_private").default(false).notNull(),
-  isArchived: boolean("is_archived").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -43,10 +39,6 @@ export const channelsRelations = relations(channels, ({ one, many }) => ({
   workspace: one(workspaces, {
     fields: [channels.workspaceId],
     references: [workspaces.id],
-  }),
-  creator: one(users, {
-    fields: [channels.creatorId],
-    references: [users.id],
   }),
   members: many(channelMembers),
 }));
