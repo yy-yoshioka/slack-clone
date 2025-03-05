@@ -123,7 +123,7 @@
   - **User Instructions**: Implemented using simple emoji list without external picker
 
 ## File Sharing and Management
-- [ ] Step 14: Implement file upload and attachment
+- [x] Step 14: Implement file upload and attachment
   - **Task**: Create file upload functionality and attachment to messages
   - **Files**:
     - `components/files/file-upload.tsx`: File upload component

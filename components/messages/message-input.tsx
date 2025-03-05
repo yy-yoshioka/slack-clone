@@ -1,99 +1,98 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Paperclip, Smile } from "lucide-react";
+import { Send } from "lucide-react";
 import { createMessage } from "@/lib/actions/message-actions";
 import { toast } from "sonner";
+import { FileUpload } from "@/components/files/file-upload";
+import { FilePreview } from "@/components/files/file-preview";
 
 type MessageInputProps = {
   channelId: string;
   workspaceId: string;
 };
 
+type Attachment = {
+  url: string;
+  name: string;
+  size: number;
+  type: string;
+};
+
 export function MessageInput({ channelId, workspaceId }: MessageInputProps) {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  // Auto-resize the textarea as content grows
-  useEffect(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = "auto";
-      textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
-    }
-  }, [content]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Send message on Enter (without Shift)
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit();
-    }
-  };
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
 
   const handleSubmit = async () => {
-    if (!content.trim()) return;
+    if (!content.trim() && attachments.length === 0) return;
 
-    setIsLoading(true);
     try {
-      const result = await createMessage(channelId, { content });
+      setIsLoading(true);
+      const result = await createMessage(channelId, {
+        content,
+        attachments,
+      });
 
-      if (!result.success) {
-        throw new Error(result.error);
+      if (result.success) {
+        setContent("");
+        setAttachments([]);
+      } else {
+        toast.error(result.error || "Failed to send message");
       }
-
-      // Clear the input after successful send
-      setContent("");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Something went wrong"
-      );
+      toast.error("Something went wrong");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleFileUpload = (
+    url: string,
+    name: string,
+    size: number,
+    type: string
+  ) => {
+    setAttachments([...attachments, { url, name, size, type }]);
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+  };
+
   return (
-    <div className="border rounded-md bg-white dark:bg-gray-800 p-3">
-      <Textarea
-        ref={textareaRef}
-        placeholder="Type a message..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="min-h-[60px] resize-none border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-2"
-      />
-      <div className="flex justify-between items-center mt-2">
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 rounded-full"
-            disabled={isLoading}
-          >
-            <Paperclip className="h-4 w-4" />
-            <span className="sr-only">Attach file</span>
-          </Button>
-          <Button
-            type="button"
-            size="icon"
-            variant="ghost"
-            className="h-8 w-8 rounded-full"
-            disabled={isLoading}
-          >
-            <Smile className="h-4 w-4" />
-            <span className="sr-only">Add emoji</span>
-          </Button>
+    <div className="flex flex-col gap-2 p-4 border-t dark:border-gray-700">
+      {attachments.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-2">
+          {attachments.map((file, index) => (
+            <FilePreview
+              key={index}
+              url={file.url}
+              name={file.name}
+              size={file.size}
+              type={file.type}
+              onRemove={() => handleRemoveFile(index)}
+            />
+          ))}
         </div>
+      )}
+      <div className="flex items-end gap-2">
+        <div className="flex-1">
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Type a message..."
+            className="resize-none"
+            rows={1}
+          />
+        </div>
+        <FileUpload onFileUpload={handleFileUpload} />
         <Button
           onClick={handleSubmit}
-          disabled={isLoading || !content.trim()}
+          disabled={isLoading || (!content.trim() && attachments.length === 0)}
           size="sm"
-          className="px-3"
         >
           <Send className="h-4 w-4 mr-2" />
           Send

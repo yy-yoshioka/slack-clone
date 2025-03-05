@@ -29,6 +29,8 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { MessageReactions } from "@/components/messages/message-reactions";
 import { getReactionCounts } from "@/lib/actions/reaction-actions";
+import { MessageFileAttachment } from "@/components/messages/message-file-attachment";
+import { getMessageFiles } from "@/lib/actions/file-actions";
 
 type User = {
   id: string;
@@ -73,6 +75,7 @@ export function MessageItem({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
   const [reactions, setReactions] = useState<any>({});
+  const [files, setFiles] = useState<any[]>([]);
 
   const isCurrentUserAuthor = user?.id === currentUserId;
   const initials = user?.name
@@ -97,6 +100,15 @@ export function MessageItem({
 
     loadReactions();
   }, [id, currentUserId, reactionsLastUpdated]);
+
+  useEffect(() => {
+    async function loadFiles() {
+      const messageFiles = await getMessageFiles(id);
+      setFiles(messageFiles);
+    }
+
+    loadFiles();
+  }, [id]);
 
   const handleReactionUpdate = async () => {
     const reactionData = await getReactionCounts(id);
@@ -221,6 +233,14 @@ export function MessageItem({
             </div>
           ) : (
             <p className="text-sm mt-1">{content}</p>
+          )}
+
+          {files.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {files.map((file) => (
+                <MessageFileAttachment key={file.id} file={file} />
+              ))}
+            </div>
           )}
 
           <div className="flex items-center gap-2 mt-2">

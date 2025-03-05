@@ -5,6 +5,7 @@ import { messages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { eq, and, desc, sql, count } from "drizzle-orm";
+import { createFileRecord } from "@/lib/actions/file-actions";
 
 export type MessageFormValues = {
   content: string;
@@ -12,13 +13,21 @@ export type MessageFormValues = {
 
 export async function createMessage(
   channelId: string,
-  data: MessageFormValues
+  data: {
+    content: string;
+    parentMessageId?: string;
+    attachments?: Array<{
+      url: string;
+      name: string;
+      size: number;
+      type: string;
+    }>;
+  }
 ) {
   try {
     const user = await getCurrentUser();
-
     if (!user) {
-      throw new Error("You must be logged in to send a message");
+      throw new Error("You must be logged in to create messages");
     }
 
     // Get user from database
@@ -30,22 +39,52 @@ export async function createMessage(
       throw new Error("User profile not found");
     }
 
-    // Create the message
+    // Insert the message
     const [message] = await db
       .insert(messages)
       .values({
         content: data.content,
         channelId,
         userId: dbUser.id,
+        parentMessageId: data.parentMessageId,
       })
       .returning();
 
-    revalidatePath(`/${message.channelId}`);
+    // Create file records if attachments exist
+    if (data.attachments && data.attachments.length > 0) {
+      for (const attachment of data.attachments) {
+        await createFileRecord(
+          attachment.url,
+          attachment.name,
+          attachment.size,
+          attachment.type,
+          message.id
+        );
+      }
+    }
+
+    // If this is a thread reply, update the parent message's isThreadParent field
+    if (data.parentMessageId) {
+      await db
+        .update(messages)
+        .set({ isThreadParent: true })
+        .where(eq(messages.id, data.parentMessageId));
+    }
+
+    revalidatePath(`/[workspaceId]/${channelId}`);
+    if (data.parentMessageId) {
+      revalidatePath(
+        `/[workspaceId]/${channelId}/thread/${data.parentMessageId}`
+      );
+    }
+
     return { success: true, messageId: message.id };
   } catch (error) {
+    console.error("Failed to create message:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to send message",
+      error:
+        error instanceof Error ? error.message : "Failed to create message",
     };
   }
 }
