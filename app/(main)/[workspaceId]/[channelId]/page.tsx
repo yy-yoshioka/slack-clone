@@ -41,7 +41,11 @@ export default async function ChannelPage({
         )}
       </div>
 
-      <MessageList channelId={channelId} workspaceId={workspaceId} />
+      <MessageList
+        channelId={channelId}
+        workspaceId={workspaceId}
+        userId={user.id}
+      />
 
       <div className="border-t pt-4">
         <MessageInput channelId={channelId} workspaceId={workspaceId} />

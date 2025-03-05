@@ -4,7 +4,7 @@ import { db } from "@/db/db";
 import { messages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { eq, and, desc, sql, count } from "drizzle-orm";
+import { eq, and, desc, count } from "drizzle-orm";
 import { createFileRecord } from "@/lib/actions/file-actions";
 
 export type MessageFormValues = {
@@ -259,5 +259,15 @@ export async function getMessageReplyCount(messageId: string) {
   } catch (error) {
     console.error("Failed to get message reply count:", error);
     return 0;
+  }
+}
+
+export async function getMessagesInChannel(channelId: string) {
+  try {
+    const messages = await getMessages(channelId);
+    return { success: true, messages };
+  } catch (error) {
+    console.error("Failed to fetch messages:", error);
+    return { success: false, messages: [], error: "Failed to fetch messages" };
   }
 }

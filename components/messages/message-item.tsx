@@ -41,45 +41,42 @@ type User = {
 
 type MessageItemProps = {
   id: string;
-  content: string;
-  createdAt: Date;
-  user: User;
-  isEdited: boolean;
-  isPinned: boolean;
-  isThreadParent: boolean;
+  message: {
+    id: string;
+    content: string;
+    createdAt: Date;
+    user: User;
+    isEdited: boolean;
+    isPinned: boolean;
+    isThreadParent: boolean;
+    replyCount?: number;
+  };
   workspaceId: string;
   channelId: string;
   currentUserId: string;
-  replyCount?: number;
-  parentMessageId?: string;
-  reactionsLastUpdated?: number;
+  showHeader?: boolean;
+  highlightText?: string;
 };
 
 export function MessageItem({
   id,
-  content,
-  createdAt,
-  user,
-  isEdited,
-  isPinned,
-  isThreadParent,
+  message,
   workspaceId,
   channelId,
   currentUserId,
-  replyCount,
-  parentMessageId,
-  reactionsLastUpdated,
+  showHeader,
+  highlightText,
 }: MessageItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedContent, setEditedContent] = useState(content);
+  const [editedContent, setEditedContent] = useState(message.content);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
   const [reactions, setReactions] = useState<any>({});
   const [files, setFiles] = useState<any[]>([]);
 
-  const isCurrentUserAuthor = user?.id === currentUserId;
-  const initials = user?.name
-    ? user.name
+  const isCurrentUserAuthor = message.user?.id === currentUserId;
+  const initials = message.user?.name
+    ? message.user.name
         .split(" ")
         .map((n) => n[0])
         .join("")
@@ -99,7 +96,7 @@ export function MessageItem({
     }
 
     loadReactions();
-  }, [id, currentUserId, reactionsLastUpdated]);
+  }, [id, currentUserId]);
 
   useEffect(() => {
     async function loadFiles() {
@@ -181,26 +178,49 @@ export function MessageItem({
     }
   };
 
+  const highlightSearchMatch = (text: string, searchTerm: string) => {
+    if (!searchTerm || !text) return text;
+
+    const regex = new RegExp(
+      `(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+      "gi"
+    );
+    const parts = text.split(regex);
+
+    return parts.map((part, i) =>
+      regex.test(part) ? (
+        <mark key={i} className="bg-yellow-200 dark:bg-yellow-900">
+          {part}
+        </mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
     <div className="group hover:bg-gray-50 dark:hover:bg-gray-800/50 px-4 py-2 transition-colors">
       <div className="flex space-x-3">
         <Avatar className="h-9 w-9">
-          <AvatarImage src={user?.imageUrl || ""} alt={user?.name || "User"} />
+          <AvatarImage
+            src={message.user?.imageUrl || ""}
+            alt={message.user?.name || "User"}
+          />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center">
             <p className="text-sm font-medium">
-              {user?.name || user?.email || "Unknown User"}
+              {message.user?.name || message.user?.email || "Unknown User"}
             </p>
             <span className="text-xs text-gray-500 ml-2">
-              {formatDistanceToNow(createdAt, { addSuffix: true })}
+              {formatDistanceToNow(message.createdAt, { addSuffix: true })}
             </span>
-            {isEdited && (
+            {message.isEdited && (
               <span className="text-xs text-gray-500 ml-2">(edited)</span>
             )}
-            {isPinned && (
+            {message.isPinned && (
               <span className="text-xs bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-500 px-1.5 py-0.5 rounded ml-2">
                 Pinned
               </span>
@@ -224,7 +244,7 @@ export function MessageItem({
                   variant="ghost"
                   onClick={() => {
                     setIsEditing(false);
-                    setEditedContent(content);
+                    setEditedContent(message.content);
                   }}
                 >
                   Cancel
@@ -232,7 +252,11 @@ export function MessageItem({
               </div>
             </div>
           ) : (
-            <p className="text-sm mt-1">{content}</p>
+            <div className="prose prose-sm dark:prose-invert max-w-none">
+              {highlightText
+                ? highlightSearchMatch(message.content, highlightText)
+                : message.content}
+            </div>
           )}
 
           {files.length > 0 && (
@@ -244,7 +268,7 @@ export function MessageItem({
           )}
 
           <div className="flex items-center gap-2 mt-2">
-            {isThreadParent ? (
+            {message.isThreadParent ? (
               <Link href={`/${workspaceId}/${channelId}/thread/${id}`}>
                 <Button
                   variant="ghost"
@@ -253,14 +277,14 @@ export function MessageItem({
                 >
                   <MessageSquare className="h-3.5 w-3.5 mr-1" />
                   View thread
-                  {replyCount && replyCount > 0 && (
+                  {message.replyCount && message.replyCount > 0 && (
                     <span className="ml-1 bg-gray-200 dark:bg-gray-700 rounded-full px-2 py-0.5 text-xs">
-                      {replyCount}
+                      {message.replyCount}
                     </span>
                   )}
                 </Button>
               </Link>
-            ) : parentMessageId ? null : (
+            ) : message.parentMessageId ? null : (
               <Link href={`/${workspaceId}/${channelId}/thread/${id}`}>
                 <Button
                   variant="ghost"
@@ -288,7 +312,7 @@ export function MessageItem({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={handlePin} disabled={isPinning}>
                     <Bookmark className="h-4 w-4 mr-2" />
-                    {isPinned ? "Unpin message" : "Pin message"}
+                    {message.isPinned ? "Unpin message" : "Pin message"}
                   </DropdownMenuItem>
 
                   {isCurrentUserAuthor && (
