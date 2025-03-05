@@ -163,7 +163,7 @@
   - **User Instructions**: Enable real-time functionality in your Supabase project settings
 
 ## Real-Time Functionality
-- [ ] Step 18: Implement real-time message updates
+- [x] Step 18: Implement real-time message updates
   - **Task**: Use Supabase real-time subscriptions to update messages and threads in real-time
   - **Files**:
     - `lib/hooks/useRealtimeMessages.ts`: Hook for real-time message updates

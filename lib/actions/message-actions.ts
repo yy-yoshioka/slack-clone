@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { eq, and, desc, count } from "drizzle-orm";
 import { createFileRecord } from "@/lib/actions/file-actions";
+import { publishMessageEvent } from "../ably-utils";
 
 export type MessageFormValues = {
   content: string;
@@ -77,6 +78,22 @@ export async function createMessage(
         `/[workspaceId]/${channelId}/thread/${data.parentMessageId}`
       );
     }
+
+    // After successfully creating the message, publish the real-time event
+    await publishMessageEvent("message.new", {
+      // Include all message data needed by subscribers
+      id: message.id,
+      content: message.content,
+      channelId,
+      createdAt: message.createdAt,
+      userId: dbUser.id,
+      user: {
+        id: user.id,
+        name: user.name,
+        imageUrl: user.imageUrl,
+      },
+      // Include other relevant message properties
+    });
 
     return { success: true, messageId: message.id };
   } catch (error) {
@@ -193,6 +210,13 @@ export async function deleteMessage(messageId: string) {
     await db.delete(messages).where(eq(messages.id, messageId));
 
     revalidatePath(`/${message.channelId}`);
+
+    // After successful deletion, publish the real-time event
+    await publishMessageEvent("message.delete", {
+      messageId,
+      channelId: message.channelId,
+    });
+
     return { success: true };
   } catch (error) {
     return {
@@ -239,6 +263,16 @@ export async function editMessage(messageId: string, data: MessageFormValues) {
       .returning();
 
     revalidatePath(`/${message.channelId}`);
+
+    // After successful update, publish the real-time event
+    await publishMessageEvent("message.update", {
+      id: messageId,
+      content: data.content,
+      channelId: message.channelId,
+      isEdited: true,
+      // Include other updated properties
+    });
+
     return { success: true, messageId: updatedMessage.id };
   } catch (error) {
     return {

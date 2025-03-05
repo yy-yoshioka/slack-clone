@@ -11,19 +11,19 @@ export default async function WorkspacePage({
 }: {
   params: { workspaceId: string };
 }) {
-  const user = await getCurrentUser();
+  const { workspaceId } = await Promise.resolve(params);
 
+  const user = await getCurrentUser();
   if (!user) {
     redirect("/auth/sign-in");
   }
 
-  const workspace = await getWorkspaceById(params.workspaceId);
-
+  const workspace = await getWorkspaceById(workspaceId);
   if (!workspace) {
     notFound();
   }
 
-  const channels = await getChannelsForWorkspace(params.workspaceId);
+  const channels = await getChannelsForWorkspace(workspaceId);
 
   return (
     <div className="max-w-4xl mx-auto py-8">
@@ -40,7 +40,7 @@ export default async function WorkspacePage({
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold">Channels</h2>
-            <Link href={`/${params.workspaceId}/channels/create`}>
+            <Link href={`/${workspaceId}/channels/create`}>
               <Button variant="ghost" size="sm">
                 <PlusCircle className="h-4 w-4 mr-2" />
                 New Channel
@@ -55,7 +55,7 @@ export default async function WorkspacePage({
               {channels.map((channel) => (
                 <li key={channel.id}>
                   <Link
-                    href={`/${params.workspaceId}/${channel.id}`}
+                    href={`/${workspaceId}/${channel.id}`}
                     className="flex items-center p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     <MessageSquare className="h-4 w-4 mr-2 text-gray-500" />
@@ -86,7 +86,7 @@ export default async function WorkspacePage({
 
             {/* You could add more workspace info here later */}
             <div className="pt-4">
-              <Link href={`/${params.workspaceId}/settings`}>
+              <Link href={`/${workspaceId}/settings`}>
                 <Button variant="outline" size="sm">
                   Workspace Settings
                 </Button>

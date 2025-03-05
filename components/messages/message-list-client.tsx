@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { MessageItem } from "@/components/messages/message-item";
-import { MessageThreadObserver } from "@/components/messages/message-thread-observer";
-import { getMessageReplyCount } from "@/lib/actions/message-actions";
 import { useChannel } from "ably/react";
 
 type Message = {
@@ -39,13 +37,59 @@ export function MessageListClient({
 }: MessageListClientProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
 
-  const { channel } = useChannel("reactions");
+  // Get the Ably channel
+  const { channel } = useChannel("messages");
 
   useEffect(() => {
     // Update messages when initialMessages changes
     setMessages(initialMessages);
   }, [initialMessages]);
 
+  useEffect(() => {
+    // Handle new message creation
+    const handleNewMessage = (message: any) => {
+      const newMessage = message.data;
+      if (newMessage.channelId === channelId) {
+        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+      }
+    };
+
+    // Handle message updates
+    const handleMessageUpdate = (message: any) => {
+      const updatedMessage = message.data;
+      if (updatedMessage.channelId === channelId) {
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
+          )
+        );
+      }
+    };
+
+    // Handle message deletion
+    const handleMessageDelete = (message: any) => {
+      const { messageId } = message.data;
+      if (message.data.channelId === channelId) {
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg.id !== messageId)
+        );
+      }
+    };
+
+    // Subscribe to all message events
+    channel.subscribe("message.new", handleNewMessage);
+    channel.subscribe("message.update", handleMessageUpdate);
+    channel.subscribe("message.delete", handleMessageDelete);
+
+    // Don't forget to unsubscribe when component unmounts
+    return () => {
+      channel.unsubscribe("message.new", handleNewMessage);
+      channel.unsubscribe("message.update", handleMessageUpdate);
+      channel.unsubscribe("message.delete", handleMessageDelete);
+    };
+  }, [channel, channelId, messages]);
+
+  // Keep the existing reaction handling code
   useEffect(() => {
     const handleReactionUpdate = async (message: any) => {
       const { messageId } = message.data;

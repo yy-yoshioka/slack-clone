@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { MessageItem } from "@/components/messages/message-item";
 import { getMessagesInChannel } from "@/lib/actions/message-actions";
-import { useRealtimeMessages } from "@/lib/hooks/use-realtime-messages";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { MessageSearch } from "@/components/messages/message-search";
+import { useChannel } from "ably/react";
 
 interface MessageListProps {
   channelId: string;
@@ -24,28 +24,79 @@ export function MessageList({
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // Load messages and subscribe to realtime updates
-  useEffect(() => {
-    const fetchMessages = async () => {
-      setIsLoading(true);
-      try {
-        const response = await getMessagesInChannel(channelId);
-        if (response.success) {
-          setMessages(response.messages);
-          setFilteredMessages(response.messages);
-        }
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
+  // メッセージを取得する関数
+  const fetchMessages = async () => {
+    setIsLoading(true);
+    try {
+      const response = await getMessagesInChannel(channelId);
+      if (response.success && response.messages) {
+        // メッセージを日付の昇順（古い順）にソート
+        const sortedMessages = response.messages.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        setMessages(sortedMessages);
+        setFilteredMessages(sortedMessages);
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+    setIsLoading(false);
+  };
+
+  // 初回ロードとチャンネル変更時にメッセージを取得
+  useEffect(() => {
     fetchMessages();
   }, [channelId]);
 
-  // Set up realtime subscription for new messages
-  const { messages: realtimeMessages } = useRealtimeMessages(channelId);
+  // Ablyのサブスクリプション設定
+  const { channel } = useChannel("messages");
+
+  useEffect(() => {
+    // 新規メッセージの処理
+    const handleNewMessage = (message: any) => {
+      if (message.data.channelId === channelId) {
+        setMessages((prev) => [...prev, message.data]);
+        setFilteredMessages((prev) => [...prev, message.data]);
+        scrollToBottom();
+      }
+    };
+
+    // メッセージ更新の処理
+    const handleMessageUpdate = (message: any) => {
+      if (message.data.channelId === channelId) {
+        const updatedMessage = message.data;
+        setMessages((prev) => {
+          const newMessages = prev.map((msg) =>
+            msg.id === updatedMessage.id ? updatedMessage : msg
+          );
+          setFilteredMessages(newMessages); // フィルタリングされたメッセージも更新
+          return newMessages;
+        });
+      }
+    };
+
+    // メッセージ削除の処理
+    const handleMessageDelete = (message: any) => {
+      if (message.data.channelId === channelId) {
+        const { messageId } = message.data;
+        const filterMessages = (prev: any[]) =>
+          prev.filter((msg) => msg.id !== messageId);
+        setMessages(filterMessages);
+        setFilteredMessages(filterMessages);
+      }
+    };
+
+    // イベントの購読
+    channel.subscribe("message.new", handleNewMessage);
+    channel.subscribe("message.update", handleMessageUpdate);
+    channel.subscribe("message.delete", handleMessageDelete);
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [channelId, channel]);
 
   // Scroll to bottom on initial load or when new messages arrive
   useEffect(() => {
@@ -81,17 +132,6 @@ export function MessageList({
     },
     [messages]
   );
-  useEffect(() => {
-    if (realtimeMessages.length > 0) {
-      setMessages(realtimeMessages);
-      if (!searchQuery) {
-        setFilteredMessages(realtimeMessages);
-      } else {
-        // Maintain search filtering when new messages arrive
-        handleSearch(searchQuery, realtimeMessages);
-      }
-    }
-  }, [realtimeMessages, searchQuery, handleSearch]);
 
   const scrollToMessage = (messageId: string) => {
     const messageElement = document.getElementById(`message-${messageId}`);
@@ -130,7 +170,7 @@ export function MessageList({
             )}
           </div>
         ) : (
-          <>
+          <div className="flex flex-col space-y-4">
             {filteredMessages.map((message, index) => {
               const previousMessage =
                 index > 0 ? filteredMessages[index - 1] : null;
@@ -150,12 +190,12 @@ export function MessageList({
                   currentUserId={userId || ""}
                   showHeader={showHeader}
                   highlightText={searchQuery}
-                  id={`message-${message.id}`}
+                  id={message.id}
                 />
               );
             })}
             <div ref={messagesEndRef} />
-          </>
+          </div>
         )}
       </div>
     </div>

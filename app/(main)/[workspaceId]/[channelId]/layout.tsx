@@ -15,8 +15,9 @@ export default async function ChannelLayout({
   params,
   children,
 }: ChannelLayoutProps) {
-  const user = await getCurrentUser();
+  const { workspaceId, channelId } = await Promise.resolve(params);
 
+  const user = await getCurrentUser();
   if (!user) {
     redirect("/auth?next=/");
   }
@@ -32,21 +33,21 @@ export default async function ChannelLayout({
 
   // Fetch channel and verify it exists
   const channel = await db.query.channels.findFirst({
-    where: (channels, { eq }) => eq(channels.id, params.channelId),
+    where: (channels, { eq }) => eq(channels.id, channelId),
     with: {
       workspace: true,
     },
   });
 
-  if (!channel || channel.workspace.id !== params.workspaceId) {
-    redirect(`/${params.workspaceId}`);
+  if (!channel || channel.workspace.id !== workspaceId) {
+    redirect(`/${workspaceId}`);
   }
 
   return (
     <div className="flex flex-col h-full">
       <ChannelTabs
-        workspaceId={params.workspaceId}
-        channelId={params.channelId}
+        workspaceId={workspaceId}
+        channelId={channelId}
         channelName={channel.name}
       />
       {children}
