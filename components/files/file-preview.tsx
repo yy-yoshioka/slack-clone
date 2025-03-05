@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { X, FileText, Image, FileIcon } from "lucide-react";
+import { X, FileIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 type FilePreviewProps = {
   url: string;
@@ -39,10 +40,12 @@ export function FilePreview({
     >
       {isImage ? (
         <div className="relative w-32 h-32">
-          <img
+          <Image
             src={url}
             alt={name}
-            className="w-full h-full object-cover rounded-md"
+            fill
+            className="object-cover rounded-md"
+            unoptimized
           />
           <Button
             variant="destructive"

@@ -14,14 +14,7 @@ async function getWorkspaces() {
 async function getUser() {
   const supabase = await createServerSupabaseClient();
 
-  const { data, error } = await supabase.auth.getUser();
-
-  console.log("Auth Error:", error);
-
-  if (error) {
-    console.error("Auth error:", error);
-    return null;
-  }
+  const { data } = await supabase.auth.getUser();
 
   return data?.user;
 }

@@ -132,7 +132,7 @@
   - **Step Dependencies**: Steps 4, 11
   - **User Instructions**: Configure Supabase Storage for secure file access
 
-- [ ] Step 15: Implement file listing and management
+- [x] Step 15: Implement file listing and management
   - **Task**: Create file browser and management UI for channels and direct messages
   - **Files**:
     - `components/files/file-browser.tsx`: File browser component

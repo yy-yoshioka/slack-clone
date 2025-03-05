@@ -7,9 +7,9 @@ export const files = pgTable("files", {
   id: uuid("id").primaryKey().defaultRandom(),
   url: text("url").notNull(),
   name: text("name").notNull(),
-  messageId: uuid("message_id")
-    .references(() => messages.id, { onDelete: "cascade" })
-    .notNull(),
+  messageId: uuid("message_id").references(() => messages.id, {
+    onDelete: "cascade",
+  }),
   userId: uuid("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
