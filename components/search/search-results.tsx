@@ -6,8 +6,6 @@ import {
   Hash,
   FileText,
   Search,
-  Loader2,
-  CalendarClock,
   ArrowUpRight,
 } from "lucide-react";
 import Link from "next/link";

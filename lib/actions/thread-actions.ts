@@ -4,7 +4,7 @@ import { db } from "@/db/db";
 import { messages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export type ThreadReplyFormValues = {
   content: string;

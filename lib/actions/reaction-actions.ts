@@ -2,7 +2,7 @@
 
 import { db } from "@/db/db";
 import { reactions } from "@/db/schema/reactions";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { getAblyClient } from "@/lib/ably";

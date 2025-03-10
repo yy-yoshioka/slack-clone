@@ -4,15 +4,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
-import { createMessage } from "@/lib/actions/message-actions";
-import { toast } from "sonner";
 import { FileUpload } from "@/components/files/file-upload";
 import { FilePreview } from "@/components/files/file-preview";
+import { Editor } from "@/components/editor";
+import { X } from "lucide-react";
 
-type MessageInputProps = {
+export interface MessageInputProps {
   channelId: string;
   workspaceId: string;
-};
+  suggestions?: string[];
+}
 
 type Attachment = {
   url: string;
@@ -21,32 +22,19 @@ type Attachment = {
   type: string;
 };
 
-export function MessageInput({ channelId, workspaceId }: MessageInputProps) {
+export function MessageInput({
+  channelId,
+  workspaceId,
+  suggestions = [],
+}: MessageInputProps) {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [activeSuggestions, setActiveSuggestions] = useState(suggestions);
 
-  const handleSubmit = async () => {
-    if (!content.trim() && attachments.length === 0) return;
-
-    try {
-      setIsLoading(true);
-      const result = await createMessage(channelId, {
-        content,
-        attachments,
-      });
-
-      if (result.success) {
-        setContent("");
-        setAttachments([]);
-      } else {
-        toast.error(result.error || "Failed to send message");
-      }
-    } catch (error) {
-      toast.error("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleSubmit = async (value: string) => {
+    // TODO: Implement message sending
+    console.log("Sending message:", value);
   };
 
   const handleFileUpload = (
@@ -63,7 +51,35 @@ export function MessageInput({ channelId, workspaceId }: MessageInputProps) {
   };
 
   return (
-    <div className="flex flex-col gap-2 p-4 border-t dark:border-gray-700">
+    <div className="space-y-2">
+      {activeSuggestions.length > 0 && (
+        <div className="flex gap-2">
+          {activeSuggestions.map((suggestion, index) => (
+            <Button
+              key={index}
+              variant="outline"
+              className="text-sm bg-background hover:bg-accent group"
+              onClick={() => {
+                // TODO: Handle suggestion click
+              }}
+            >
+              <span>{suggestion}</span>
+              <X
+                className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveSuggestions((prev) =>
+                    prev.filter((_, i) => i !== index)
+                  );
+                }}
+              />
+            </Button>
+          ))}
+        </div>
+      )}
+
+      <Editor placeholder={`Message #${channelId}`} onSubmit={handleSubmit} />
+
       {attachments.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-2">
           {attachments.map((file, index) => (

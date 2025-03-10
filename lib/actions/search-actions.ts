@@ -2,8 +2,8 @@
 
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/db/db";
-import { SQL, eq, ilike, inArray, or, and, desc } from "drizzle-orm";
-import { messages, channels, users, files } from "@/db/schema";
+import { or } from "drizzle-orm";
+import { channels } from "@/db/schema";
 
 // Search across messages, channels, and files
 export async function searchWorkspace(workspaceId: string, query: string) {

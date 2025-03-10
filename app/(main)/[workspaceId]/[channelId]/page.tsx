@@ -1,54 +1,63 @@
-import { notFound, redirect } from "next/navigation";
-import { getWorkspaceById } from "@/lib/actions/workspace-actions";
-import { getChannelById } from "@/lib/actions/channel-actions";
-import { getCurrentUser } from "@/lib/auth";
 import { MessageInput } from "@/components/messages/message-input";
 import { MessageList } from "@/components/messages/message-list";
+import { Hash, Info, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export default async function ChannelPage({
-  params,
-}: {
-  params: { workspaceId: string; channelId: string };
-}) {
-  const { workspaceId, channelId } = await Promise.resolve(params);
+interface ChannelPageProps {
+  params: {
+    workspaceId: string;
+    channelId: string;
+  };
+}
 
-  const user = await getCurrentUser();
-  if (!user) {
-    redirect("/auth/sign-in");
-  }
-
-  const [workspace, channel] = await Promise.all([
-    getWorkspaceById(workspaceId),
-    getChannelById(channelId),
-  ]);
-
-  if (!workspace) {
-    notFound();
-  }
-
-  if (!channel || channel.workspaceId !== workspaceId) {
-    notFound();
-  }
+export default function ChannelPage({ params }: ChannelPageProps) {
+  const channelName = "social"; // TODO: Get from database
+  const description =
+    "Other channels are for work. This one's just for fun. Get to know your teammates and show your lighter side. 🎉";
+  const memberCount = 1;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="border-b pb-4">
-        <h1 className="text-xl font-semibold">#{channel.name}</h1>
-        {channel.description && (
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {channel.description}
-          </p>
-        )}
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between px-4 py-3 border-b">
+        <div className="flex items-center gap-2">
+          <Hash className="h-5 w-5 text-muted-foreground" />
+          <h1 className="text-lg font-semibold">{channelName}</h1>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="gap-1" asChild>
+            <Link href={`/${params.workspaceId}/${params.channelId}/details`}>
+              <Info className="h-4 w-4" />
+              <span className="hidden sm:inline">Details</span>
+            </Link>
+          </Button>
+
+          <Button variant="ghost" size="sm" className="gap-1" asChild>
+            <Link href={`/${params.workspaceId}/${params.channelId}/members`}>
+              <Users className="h-4 w-4" />
+              <span>{memberCount}</span>
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <MessageList
-        channelId={channelId}
-        workspaceId={workspaceId}
-        userId={user.id}
-      />
+      <div className="px-4 py-3 border-b bg-muted/50">
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
 
-      <div className="border-t pt-4">
-        <MessageInput channelId={channelId} workspaceId={workspaceId} />
+      <div className="flex-1 overflow-auto">
+        <MessageList />
+      </div>
+
+      <div className="p-4 border-t">
+        <MessageInput
+          channelId={params.channelId}
+          suggestions={[
+            "What's brought you joy lately?",
+            "If you could be any animal...",
+          ]}
+        />
       </div>
     </div>
   );

@@ -1,22 +1,12 @@
-"use client";
-
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import { Toaster } from "sonner";
-import * as Ably from "ably";
-import { AblyProvider, ChannelProvider } from "ably/react";
+import { ClientLayout } from "./client-layout";
 
-const client = new Ably.Realtime({
-  key: process.env.NEXT_PUBLIC_ABLY_API_KEY,
-});
-
-const inter = Inter({ subsets: ["latin"] });
-
-// メタデータはサーバーコンポーネントでのみ使用可能なので削除
-// export const metadata: Metadata = {
-//   title: "SlackClone",
-//   description: "A modern messaging app inspired by Slack",
-// };
+export const metadata: Metadata = {
+  title: "SlackClone",
+  description: "A Slack clone built with Next.js and Supabase",
+};
 
 export default function RootLayout({
   children,
@@ -25,13 +15,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AblyProvider client={client}>
-          <ChannelProvider channelName="messages">
-            {children}
-            <Toaster />
-          </ChannelProvider>
-        </AblyProvider>
+      <body className={GeistSans.className}>
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );

@@ -1,15 +1,9 @@
 "use server";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
+
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import { db } from "@/db/db";
-
-// This is a temporary mock data function - will be replaced with actual data fetching
-async function getWorkspaces() {
-  // Return empty array for now - this will be implemented in later steps
-  return [];
-}
+import { WorkspaceLayout } from "@/components/layout/workspace-layout";
 
 // This is a temporary mock function - will be replaced with actual auth check
 async function getUserWithProfile() {
@@ -45,25 +39,14 @@ export default async function MainLayout({
     redirect("/auth/sign-in");
   }
 
-  const workspaces = await getWorkspaces();
-
   return (
-    <div className="flex h-screen overflow-hidden">
-      <div className="w-64 h-full hidden md:block">
-        <Sidebar
-          workspaces={workspaces}
-          currentWorkspaceId={params.workspaceId}
-        />
-      </div>
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <Header
-          user={user}
-          workspaceId={params.workspaceId}
-          channelId={params.channelId}
-          profile={profile}
-        />
-        <main className="flex-1 overflow-auto p-4">{children}</main>
-      </div>
-    </div>
+    <WorkspaceLayout
+      user={user}
+      profile={profile}
+      workspaceId={params.workspaceId}
+      channelId={params.channelId}
+    >
+      {children}
+    </WorkspaceLayout>
   );
 }
