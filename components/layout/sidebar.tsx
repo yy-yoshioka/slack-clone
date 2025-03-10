@@ -13,6 +13,9 @@ import {
   Hash,
   Plus,
   ChevronDown,
+  MessageCircle,
+  Headphones,
+  MoreVertical,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -185,7 +188,8 @@ export function Sidebar() {
   return (
     <div className="flex h-full">
       {/* ワークスペースサイドバー - Slackの左端部分 */}
-      <div className="w-14 bg-[#3F0E40] flex flex-col items-center py-3 space-y-3 border-r border-[#522653]">
+      <div className="w-14 bg-[#3F0E40] flex flex-col items-center py-3 space-y-4 border-r border-[#522653]">
+        {/* ワークスペースアイコン */}
         {workspaces.map((workspace) => (
           <Link
             key={workspace.id}
@@ -208,10 +212,72 @@ export function Sidebar() {
           </Link>
         ))}
 
+        {/* ナビゲーションアイコン */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/"
+                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+              >
+                <Home className="h-5 w-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Home</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/dms"
+                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+              >
+                <MessageSquare className="h-5 w-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>DMs</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/mentions"
+                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+              >
+                <Bell className="h-5 w-5" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Mentions</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded">
+                <MoreVertical className="h-5 w-5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>More</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
         {/* ワークスペース追加ボタン */}
         <Link
           href="/workspace/create"
-          className="w-9 h-9 rounded flex items-center justify-center text-white bg-[#4A154B] hover:bg-[#4C9689] transition-all duration-200 hover:rounded-lg"
+          className="mt-auto w-9 h-9 rounded flex items-center justify-center text-white bg-[#4A154B] hover:bg-[#4C9689] transition-all duration-200 hover:rounded-lg"
         >
           <Plus className="h-5 w-5" />
         </Link>
@@ -252,41 +318,37 @@ export function Sidebar() {
           <span>Search {currentWorkspace?.name}</span>
         </button>
 
-        {/* メインナビゲーション */}
-        <div className="px-3 space-y-1">
+        {/* プロモーション */}
+        <div className="mx-3 mb-3 bg-[#4A154B] rounded p-2 text-sm">
+          <div className="flex items-center">
+            <PlusCircle className="h-4 w-4 mr-2" />
+            <span className="font-medium">Get 50% Off Slack</span>
+          </div>
+          <div className="text-xs text-[#BCABBC] mt-1">
+            1 day left on this offer
+          </div>
+        </div>
+
+        {/* Slackのメインナビゲーション - ThreadsとHuddles */}
+        <div className="px-3 space-y-1 mb-3">
           <Link
-            href={params.workspaceId ? `/workspace/${params.workspaceId}` : "/"}
+            href="/threads"
             className="flex items-center p-1.5 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
           >
-            <Home className="h-4 w-4 mr-2" />
-            <span className="text-sm">Home</span>
+            <MessageCircle className="h-4 w-4 mr-2" />
+            <span className="text-sm">Threads</span>
           </Link>
           <Link
-            href={
-              params.workspaceId
-                ? `/workspace/${params.workspaceId}/dms`
-                : "/dms"
-            }
+            href="/huddles"
             className="flex items-center p-1.5 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
           >
-            <MessageSquare className="h-4 w-4 mr-2" />
-            <span className="text-sm">DMs</span>
-          </Link>
-          <Link
-            href={
-              params.workspaceId
-                ? `/workspace/${params.workspaceId}/activity`
-                : "/activity"
-            }
-            className="flex items-center p-1.5 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
-          >
-            <Bell className="h-4 w-4 mr-2" />
-            <span className="text-sm">Activity</span>
+            <Headphones className="h-4 w-4 mr-2" />
+            <span className="text-sm">Huddles</span>
           </Link>
         </div>
 
         {/* チャンネルセクション */}
-        <div className="flex-1 overflow-y-auto px-2 mt-3">
+        <div className="flex-1 overflow-y-auto px-2">
           <Collapsible
             open={channelsOpen}
             onOpenChange={setChannelsOpen}
@@ -384,6 +446,13 @@ export function Sidebar() {
                   </Link>
                 </>
               )}
+              <Link
+                href="#"
+                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+              >
+                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <span>Add channels</span>
+              </Link>
             </CollapsibleContent>
           </Collapsible>
 
@@ -436,6 +505,13 @@ export function Sidebar() {
                 <span className="w-3.5 h-3.5 bg-yellow-500 rounded-full mr-2"></span>
                 <span>you</span>
               </Link>
+              <Link
+                href="#"
+                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+              >
+                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <span>Add coworkers</span>
+              </Link>
             </CollapsibleContent>
           </Collapsible>
 
@@ -476,6 +552,13 @@ export function Sidebar() {
               >
                 <span className="w-3.5 h-3.5 bg-purple-500 rounded-full mr-2"></span>
                 <span>Slackbot</span>
+              </Link>
+              <Link
+                href="#"
+                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+              >
+                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <span>Add apps</span>
               </Link>
             </CollapsibleContent>
           </Collapsible>
