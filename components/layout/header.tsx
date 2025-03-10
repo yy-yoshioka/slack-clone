@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
   user: User | null;
+  profile: {
+    displayName: string;
+    avatarUrl?: string | null;
+  } | null;
   workspaceName?: string;
   channelName?: string;
   channelId?: string;
@@ -17,6 +21,7 @@ interface HeaderProps {
 
 export function Header({
   user,
+  profile,
   workspaceName,
   channelName,
   channelId,
@@ -59,7 +64,7 @@ export function Header({
           </Button>
         )}
 
-        <UserMenu user={user} />
+        <UserMenu user={user} profile={profile} />
       </div>
     </header>
   );

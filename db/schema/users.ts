@@ -3,11 +3,16 @@ import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
-  email: varchar("email", { length: 255 }).notNull().unique(),
+  email: text("email").notNull(),
+  name: text("name"),
+  imageUrl: text("image_url"),
+  title: text("title"),
+  bio: text("bio"),
+  phoneNumber: text("phone_number"),
+  timezone: text("timezone"),
+  authId: text("auth_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  // Supabase auth id for linking to auth system
-  authId: text("auth_id").unique(),
 });
 
 export const profiles = pgTable("profiles", {

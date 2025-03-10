@@ -152,7 +152,7 @@
   - **User Instructions**: Enable PostgreSQL full-text search in Supabase
 
 ## Notifications
-- [ ] Step 17: Implement real-time notifications
+<!-- - [ ] Step 17: Implement real-time notifications
   - **Task**: Create notification system using Supabase real-time subscriptions
   - **Files**:
     - `components/notifications/notification-center.tsx`: Notification center component
@@ -160,7 +160,7 @@
     - `lib/actions/notification-actions.ts`: Server actions for notifications
     - `lib/hooks/useNotifications.ts`: Hook for managing notifications
   - **Step Dependencies**: Steps 11, 12, 13
-  - **User Instructions**: Enable real-time functionality in your Supabase project settings
+  - **User Instructions**: Enable real-time functionality in your Supabase project settings -->
 
 ## Real-Time Functionality
 - [x] Step 18: Implement real-time message updates
@@ -170,15 +170,15 @@
     - `lib/hooks/useRealtimeThreads.ts`: Hook for real-time thread updates
   - **Step Dependencies**: Steps 11, 17
 
-- [ ] Step 19: Add online presence indicators
+<!-- - [ ] Step 19: Add online presence indicators
   - **Task**: Implement online/offline status indicators for users
   - **Files**:
     - `components/ui/presence-indicator.tsx`: Presence indicator component
     - `lib/hooks/usePresence.ts`: Hook for managing user presence
-  - **Step Dependencies**: Step 18
+  - **Step Dependencies**: Step 18 -->
 
 ## User Profile and Direct Messaging
-- [ ] Step 20: Implement user profile management
+- [x] Step 20: Implement user profile management
   - **Task**: Create user profile editing and viewing components
   - **Files**:
     - `app/(main)/profile/page.tsx`: User profile page
@@ -187,25 +187,25 @@
     - `lib/actions/profile-actions.ts`: Server actions for profile management
   - **Step Dependencies**: Steps 5, 8
 
-- [ ] Step 21: Implement direct messaging
+<!-- - [ ] Step 21: Implement direct messaging
   - **Task**: Create direct message UI and functionality
   - **Files**:
     - `components/dm/dm-list.tsx`: Direct message list component
     - `components/dm/dm-chat.tsx`: Direct message chat component
     - `app/(main)/[workspaceId]/dm/[userId]/page.tsx`: Direct message page
     - `lib/actions/dm-actions.ts`: Server actions for direct messages
-  - **Step Dependencies**: Steps 11, 18
+  - **Step Dependencies**: Steps 11, 18 -->
 
-## Notification Preferences
+<!-- ## Notification Preferences
 - [ ] Step 22: Add notification preferences
   - **Task**: Create UI for managing notification preferences
   - **Files**:
     - `app/(main)/settings/notifications/page.tsx`: Notification settings page
     - `components/settings/notification-preferences.tsx`: Notification preferences component
     - `lib/actions/settings-actions.ts`: Server actions for settings
-  - **Step Dependencies**: Step 17
+  - **Step Dependencies**: Step 17 -->
 
-## Final Touches and Testing
+<!-- ## Final Touches and Testing
 - [ ] Step 23: Implement error handling and loading states
   - **Task**: Add error boundaries, loading states, and fallbacks throughout the application
   - **Files**:
@@ -219,7 +219,7 @@
   - **Files**:
     - Updates to various components for responsive behavior
     - `components/layout/mobile-navigation.tsx`: Mobile navigation component
-  - **Step Dependencies**: Step 23
+  - **Step Dependencies**: Step 23 -->
 
 ## Deployment
 - [ ] Step 25: Prepare for deployment

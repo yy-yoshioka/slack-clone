@@ -12,13 +12,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User } from "@supabase/supabase-js";
-import { UserCircle } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { User as UserIcon, Settings } from "lucide-react";
+
+interface Profile {
+  displayName: string;
+  avatarUrl?: string | null;
+}
 
 interface UserMenuProps {
   user: User | null;
+  profile?: Profile | null;
 }
 
-export function UserMenu({ user }: UserMenuProps) {
+export function UserMenu({ user, profile }: UserMenuProps) {
   if (!user) {
     return (
       <div className="flex items-center gap-2">
@@ -34,24 +41,48 @@ export function UserMenu({ user }: UserMenuProps) {
     );
   }
 
+  const initials = profile?.displayName
+    ? profile.displayName
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+    : "U";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="flex items-center gap-2 h-8 w-8 rounded-full"
-        >
-          <UserCircle className="h-8 w-8" />
+        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8">
+            <AvatarImage
+              src={profile?.avatarUrl || undefined}
+              alt={profile?.displayName || "User"}
+            />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
+              {profile?.displayName}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user.email}
+            </p>
+          </div>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile">Profile</Link>
+          <Link href="/profile">
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings">Settings</Link>
+        <DropdownMenuItem>
+          <Settings className="mr-2 h-4 w-4" />
+          <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>

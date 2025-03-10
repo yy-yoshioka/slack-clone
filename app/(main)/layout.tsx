@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase";
+import { db } from "@/db/db";
 
 // This is a temporary mock data function - will be replaced with actual data fetching
 async function getWorkspaces() {
@@ -11,12 +12,23 @@ async function getWorkspaces() {
 }
 
 // This is a temporary mock function - will be replaced with actual auth check
-async function getUser() {
+async function getUserWithProfile() {
   const supabase = await createServerSupabaseClient();
-
   const { data } = await supabase.auth.getUser();
 
-  return data?.user;
+  if (!data.user) return { user: null, profile: null };
+
+  const profile = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.authId, data.user.id),
+    with: {
+      profile: true,
+    },
+  });
+
+  return {
+    user: data.user,
+    profile: profile?.profile || null,
+  };
 }
 
 export default async function MainLayout({
@@ -26,7 +38,7 @@ export default async function MainLayout({
   children: React.ReactNode;
   params: { workspaceId?: string; channelId?: string };
 }) {
-  const user = await getUser();
+  const { user, profile } = await getUserWithProfile();
 
   // Redirect to login if not authenticated
   if (!user) {
@@ -48,6 +60,7 @@ export default async function MainLayout({
           user={user}
           workspaceId={params.workspaceId}
           channelId={params.channelId}
+          profile={profile}
         />
         <main className="flex-1 overflow-auto p-4">{children}</main>
       </div>
