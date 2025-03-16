@@ -1,5 +1,12 @@
-import { FileText, Image, Film, File, Download } from "lucide-react";
+import {
+  FileText,
+  Image as ImageIcon,
+  Film,
+  File,
+  Download,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 type MessageFileAttachmentProps = {
   file: {
@@ -25,7 +32,7 @@ export function MessageFileAttachment({ file }: MessageFileAttachmentProps) {
 
   const getFileIcon = () => {
     const type = file.type || "";
-    if (type.startsWith("image/")) return <Image className="h-5 w-5" />;
+    if (type.startsWith("image/")) return <ImageIcon className="h-5 w-5" />;
     if (type.startsWith("video/")) return <Film className="h-5 w-5" />;
     if (type.startsWith("text/") || type.includes("document"))
       return <FileText className="h-5 w-5" />;
@@ -41,9 +48,11 @@ export function MessageFileAttachment({ file }: MessageFileAttachmentProps) {
           rel="noopener noreferrer"
           className="block"
         >
-          <img
+          <Image
             src={file.url}
-            alt={file.name}
+            alt={file.name || "File attachment"}
+            width={500}
+            height={300}
             className="rounded-md border border-gray-200 dark:border-gray-700 max-h-64 object-contain"
           />
         </a>

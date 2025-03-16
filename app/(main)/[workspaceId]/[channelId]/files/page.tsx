@@ -50,7 +50,7 @@ export default async function ChannelFilesPage({
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 hide-scrollbar hover-scrollbar">
         <FileBrowser workspaceId={workspaceId} channelId={channelId} />
       </div>
     </div>

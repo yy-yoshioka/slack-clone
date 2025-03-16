@@ -61,7 +61,7 @@ export async function signUpWithPassword(credentials: SignUpCredentials) {
           fullName,
         });
       }
-    } catch (error) {
+    } catch {
       // If database insert fails, clean up the auth user
       await supabase.auth.admin.deleteUser(authData.user.id);
       throw new Error("Failed to create user profile");

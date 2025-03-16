@@ -4,8 +4,6 @@ import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/db/db";
-import { workspaceMembers, workspaces } from "@/db/schema/workspaces";
-import { eq } from "drizzle-orm";
 
 export default async function HomePage() {
   const user = await getCurrentUser();

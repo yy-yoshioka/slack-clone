@@ -31,14 +31,12 @@ type ReactionData = {
 type MessageReactionsProps = {
   messageId: string;
   reactions: ReactionData;
-  currentUserId: string;
   onReactionUpdate?: () => void;
 };
 
 export function MessageReactions({
   messageId,
   reactions,
-  currentUserId,
   onReactionUpdate,
 }: MessageReactionsProps) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);

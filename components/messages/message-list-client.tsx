@@ -3,24 +3,7 @@
 import { useEffect, useState } from "react";
 import { MessageItem } from "@/components/messages/message-item";
 import { useChannel } from "ably/react";
-
-type Message = {
-  id: string;
-  content: string;
-  createdAt: Date;
-  isEdited: boolean;
-  isPinned: boolean;
-  isThreadParent: boolean;
-  replyCount?: number;
-  user: {
-    id: string;
-    name: string | null;
-    email: string | null;
-    imageUrl: string | null;
-  };
-  parentMessageId?: string;
-  reactionsLastUpdated?: number;
-};
+import { Message } from "../../types/message";
 
 type MessageListClientProps = {
   initialMessages: Message[];
@@ -47,31 +30,28 @@ export function MessageListClient({
 
   useEffect(() => {
     // Handle new message creation
-    const handleNewMessage = (message: any) => {
-      const newMessage = message.data;
-      if (newMessage.channelId === channelId) {
-        setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    const handleNewMessage = (message: Message) => {
+      if (message.channelId === channelId) {
+        setMessages((prevMessages) => [message, ...prevMessages]);
       }
     };
 
     // Handle message updates
-    const handleMessageUpdate = (message: any) => {
-      const updatedMessage = message.data;
-      if (updatedMessage.channelId === channelId) {
+    const handleMessageUpdate = (message: Message) => {
+      if (message.channelId === channelId) {
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
-            msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
+            msg.id === message.id ? { ...msg, ...message } : msg
           )
         );
       }
     };
 
     // Handle message deletion
-    const handleMessageDelete = (message: any) => {
-      const { messageId } = message.data;
-      if (message.data.channelId === channelId) {
+    const handleMessageDelete = (message: Message) => {
+      if (message.channelId === channelId) {
         setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.id !== messageId)
+          prevMessages.filter((msg) => msg.id !== message.id)
         );
       }
     };
@@ -91,11 +71,11 @@ export function MessageListClient({
 
   // Keep the existing reaction handling code
   useEffect(() => {
-    const handleReactionUpdate = async (message: any) => {
-      const { messageId } = message.data;
-      // Find the message and update its reactions
+    const handleReactionUpdate = async (message: Message) => {
       const updatedMessages = [...messages];
-      const messageIndex = updatedMessages.findIndex((m) => m.id === messageId);
+      const messageIndex = updatedMessages.findIndex(
+        (m) => m.id === message.id
+      );
 
       if (messageIndex !== -1) {
         // Trigger the message component to refresh its reactions

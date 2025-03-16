@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useChannel } from "ably/react";
 
+interface MessageData {
+  id: string;
+  content: string;
+  userId: string;
+  timestamp: string | Date;
+  attachments?: MessageAttachment[];
+  reactions?: Reaction[];
+  // Add other properties
+}
+
 export function useMessageChannel(channelId: string) {
   const { channel } = useChannel("messages");
   const [isConnected, setIsConnected] = useState(false);
@@ -26,8 +36,10 @@ export function useMessageChannel(channelId: string) {
   return {
     channel,
     isConnected,
-    publishMessage: (data: any) => channel.publish("message.new", data),
-    updateMessage: (data: any) => channel.publish("message.update", data),
-    deleteMessage: (data: any) => channel.publish("message.delete", data),
+    publishMessage: (data: MessageData) => channel.publish("message.new", data),
+    updateMessage: (data: MessageData) =>
+      channel.publish("message.update", data),
+    deleteMessage: (data: MessageData) =>
+      channel.publish("message.delete", data),
   };
 }

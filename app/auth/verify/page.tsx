@@ -8,8 +8,9 @@ export default function VerifyPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold">Verify Your Email</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            We've sent a verification email to your address. Please check your
-            inbox and click the verification link to complete your registration.
+            We&apos;ve sent a verification email to your address. Please check
+            your inbox and click the verification link to complete your
+            registration.
           </p>
         </div>
 

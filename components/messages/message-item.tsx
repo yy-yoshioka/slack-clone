@@ -54,9 +54,22 @@ type MessageItemProps = {
   workspaceId: string;
   channelId: string;
   currentUserId: string;
-  showHeader?: boolean;
   highlightText?: string;
 };
+
+interface Reaction {
+  emoji: string;
+  count: number;
+  users: string[];
+}
+
+interface MessageAttachment {
+  id: string;
+  url: string;
+  type: string;
+  name: string;
+  // Add other properties
+}
 
 export function MessageItem({
   id,
@@ -64,15 +77,14 @@ export function MessageItem({
   workspaceId,
   channelId,
   currentUserId,
-  showHeader,
   highlightText,
 }: MessageItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState(message.content);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPinning, setIsPinning] = useState(false);
-  const [reactions, setReactions] = useState<any>({});
-  const [files, setFiles] = useState<any[]>([]);
+  const [reactions, setReactions] = useState<Reaction>({});
+  const [files, setFiles] = useState<MessageAttachment[]>([]);
 
   const isCurrentUserAuthor = message.user?.id === currentUserId;
   const initials = message.user?.name

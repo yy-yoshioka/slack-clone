@@ -112,7 +112,7 @@ export function ChannelCreateForm({ workspaceId }: ChannelCreateFormProps) {
                   />
                 </FormControl>
                 <FormDescription>
-                  Optional brief description of the channel's purpose.
+                  Optional brief description of the channel&apos;s purpose.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

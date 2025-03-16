@@ -14,7 +14,8 @@ export default function SearchPage() {
           <SearchInput />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-6">
+
+      <div className="flex-1 overflow-y-auto p-6 hide-scrollbar hover-scrollbar">
         <SearchResults />
       </div>
     </div>

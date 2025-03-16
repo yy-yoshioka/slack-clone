@@ -8,7 +8,6 @@ import { useDebounce } from "@/lib/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 
 interface MessageSearchProps {
-  channelId: string;
   onSearch: (query: string) => void;
   onNavigate?: (messageId: string) => void;
   matchCount?: number;
@@ -16,7 +15,6 @@ interface MessageSearchProps {
 }
 
 export function MessageSearch({
-  channelId,
   onSearch,
   onNavigate,
   matchCount = 0,

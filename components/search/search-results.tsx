@@ -7,6 +7,7 @@ import {
   FileText,
   Search,
   ArrowUpRight,
+  Film,
 } from "lucide-react";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
@@ -14,6 +15,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { searchWorkspace } from "@/lib/actions/search-actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import { Message } from "../../types/message";
 
 type SearchTab = "all" | "messages" | "channels" | "files";
 
@@ -30,7 +33,7 @@ export function SearchResults({
   const [activeTab, setActiveTab] = useState<SearchTab>("all");
   const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<{
-    messages: any[];
+    messages: Message[];
     channels: any[];
     files: any[];
   }>({
@@ -100,7 +103,8 @@ export function SearchResults({
           <h2 className="text-xl font-semibold">
             {query ? (
               <>
-                Search results for <span className="italic">"{query}"</span>
+                Search results for{" "}
+                <span className="italic">&quot;{query}&quot;</span>
               </>
             ) : (
               "Search"
@@ -331,7 +335,7 @@ function MessageResult({
   workspaceId,
   highlight,
 }: {
-  message: any;
+  message: Message;
   workspaceId: string;
   highlight: (text: string) => React.ReactNode;
 }) {
@@ -421,10 +425,12 @@ function FileResult({
   const getFileIcon = () => {
     if (isImage)
       return (
-        <img
+        <Image
           src={file.url}
           alt={file.name}
           className="h-full w-full object-cover"
+          width={32}
+          height={32}
         />
       );
     if (isVideo) return <Film className="h-6 w-6 text-primary" />;
@@ -441,33 +447,16 @@ function FileResult({
   return (
     <Link
       href={`/${file.message?.channel?.workspaceId}/${file.message?.channelId}`}
-      className="flex items-start p-3 hover:bg-muted/50 rounded-md transition-colors"
     >
-      <div className="flex gap-3">
-        <div
-          className={`h-10 w-10 rounded overflow-hidden flex items-center justify-center ${
-            isImage ? "" : "bg-primary/10"
-          }`}
-        >
+      <div className="flex items-center p-3 hover:bg-muted/50 rounded-md transition-colors">
+        <div className="flex items-center gap-3">
           {getFileIcon()}
-        </div>
-        <div>
-          <div className="font-medium">{highlight(file.name)}</div>
-          <div className="text-xs text-muted-foreground flex items-center gap-2">
-            <span>{formatFileSize(file.size)}</span>
-            <span>•</span>
-            <span>
-              {formatDistanceToNow(new Date(file.createdAt), {
-                addSuffix: true,
-              })}
-            </span>
+          <div>
+            <div className="font-medium">{highlight(file.name)}</div>
+            <p className="text-sm text-muted-foreground line-clamp-1">
+              {formatFileSize(file.size)}
+            </p>
           </div>
-          {file.message?.channel && (
-            <div className="mt-1 text-xs text-primary flex items-center">
-              <Hash className="h-3 w-3 mr-1" />
-              {file.message.channel.name}
-            </div>
-          )}
         </div>
       </div>
     </Link>

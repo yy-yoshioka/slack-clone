@@ -39,7 +39,8 @@ export async function ThreadView({
         <div className="max-w-md">
           <h3 className="text-lg font-medium">Thread not found</h3>
           <p className="text-sm text-gray-500 mt-1">
-            The message you're looking for doesn't exist or has been deleted.
+            The message you&apos;re looking for doesn&apos;t exist or has been
+            deleted.
           </p>
         </div>
       </div>
@@ -83,7 +84,7 @@ export async function ThreadView({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 px-4">
+      <div className="flex-1 overflow-y-auto py-4 px-4 hide-scrollbar hover-scrollbar">
         {replies.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             No replies yet. Be the first to reply to this thread.

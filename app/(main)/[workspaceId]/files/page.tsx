@@ -51,7 +51,7 @@ export default async function FilesPage({ params }: FilesPageProps) {
         </p>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6 hide-scrollbar hover-scrollbar">
         <FileBrowser workspaceId={params.workspaceId} />
       </div>
     </div>

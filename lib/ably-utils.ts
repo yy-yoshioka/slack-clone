@@ -1,10 +1,11 @@
 import { getAblyClient } from "./ably";
+import { Message } from "../types/message";
 
 type MessageEventType = "message.new" | "message.update" | "message.delete";
 
 export async function publishMessageEvent(
   eventType: MessageEventType,
-  data: any
+  data: Message
 ) {
   try {
     const ably = getAblyClient();

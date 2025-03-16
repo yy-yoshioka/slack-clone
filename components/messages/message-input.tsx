@@ -11,7 +11,6 @@ import { X } from "lucide-react";
 
 export interface MessageInputProps {
   channelId: string;
-  workspaceId: string;
   suggestions?: string[];
 }
 
@@ -24,11 +23,9 @@ type Attachment = {
 
 export function MessageInput({
   channelId,
-  workspaceId,
   suggestions = [],
 }: MessageInputProps) {
   const [content, setContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [activeSuggestions, setActiveSuggestions] = useState(suggestions);
 
@@ -107,7 +104,7 @@ export function MessageInput({
         <FileUpload onFileUpload={handleFileUpload} />
         <Button
           onClick={handleSubmit}
-          disabled={isLoading || (!content.trim() && attachments.length === 0)}
+          disabled={!content.trim() && attachments.length === 0}
           size="sm"
         >
           <Send className="h-4 w-4 mr-2" />

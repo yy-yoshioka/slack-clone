@@ -60,7 +60,7 @@ export function ResetPasswordForm() {
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-bold">Check Your Email</h1>
           <p className="text-gray-500 dark:text-gray-400">
-            We've sent a password reset link to your email address.
+            We&apos;ve sent a password reset link to your email address.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ export function ResetPasswordForm() {
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-bold">Reset Password</h1>
         <p className="text-gray-500 dark:text-gray-400">
-          Enter your email address and we'll send you a link to reset your
+          Enter your email address and we&apos;ll send you a link to reset your
           password
         </p>
       </div>

@@ -22,8 +22,8 @@ export default async function WorkspacesPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
           <h2 className="text-xl font-semibold mb-2">No workspaces yet</h2>
           <p className="mb-6 text-gray-600 dark:text-gray-400">
-            You don't have any workspaces yet. Create your first workspace to
-            get started.
+            You don&apos;t have any workspaces yet. Create your first workspace
+            to get started.
           </p>
           <Link href="/workspaces/create">
             <Button>

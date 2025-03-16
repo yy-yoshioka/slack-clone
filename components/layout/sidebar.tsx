@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useSidebarSection } from "@/lib/sidebar-state";
+import Image from "next/image";
 
 interface Workspace {
   id: string;
@@ -56,9 +58,12 @@ export function Sidebar() {
   const params = useParams();
   const router = useRouter();
   const supabase = createClientComponentClient();
-  const [channelsOpen, setChannelsOpen] = useState(true);
-  const [dmsOpen, setDmsOpen] = useState(true);
-  const [appsOpen, setAppsOpen] = useState(true);
+
+  // Replace individual state management with our custom hook
+  const [channelsOpen, toggleChannels] = useSidebarSection("channels", true);
+  const [dmsOpen, toggleDMs] = useSidebarSection("directMessages", true);
+  const [appsOpen, toggleApps] = useSidebarSection("apps", true);
+
   const [newChannelOpen, setNewChannelOpen] = useState(false);
   const [newChannelName, setNewChannelName] = useState("");
 
@@ -188,23 +193,25 @@ export function Sidebar() {
   return (
     <div className="flex h-full">
       {/* ワークスペースサイドバー - Slackの左端部分 */}
-      <div className="w-14 bg-[#3F0E40] flex flex-col items-center py-3 space-y-4 border-r border-[#522653]">
+      <div className="w-14 bg-[#3F0E40] flex flex-col items-center py-4 space-y-4 border-r border-[#522653]">
         {/* ワークスペースアイコン */}
         {workspaces.map((workspace) => (
           <Link
             key={workspace.id}
             href={`/workspace/${workspace.id}`}
-            className={`w-9 h-9 rounded flex items-center justify-center text-white transition-all duration-200 ${
+            className={`w-10 h-10 rounded flex items-center justify-center text-white transition-all duration-200 ${
               params.workspaceId === workspace.id
                 ? "bg-white text-[#3F0E40]"
                 : "bg-[#4A154B] hover:bg-[#4C9689] hover:text-white"
             } hover:rounded-lg`}
           >
             {workspace.logo_url ? (
-              <img
+              <Image
                 src={workspace.logo_url}
                 alt={workspace.name}
                 className="w-full h-full object-cover rounded"
+                width={40}
+                height={40}
               />
             ) : (
               workspace.name.charAt(0).toUpperCase()
@@ -218,9 +225,9 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <Link
                 href="/"
-                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+                className="w-10 h-10 flex items-center justify-center text-white hover:bg-[#350D36] rounded transition-colors duration-150"
               >
-                <Home className="h-5 w-5" />
+                <Home className="h-[18px] w-[18px]" />
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">
@@ -234,9 +241,9 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <Link
                 href="/dms"
-                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+                className="w-10 h-10 flex items-center justify-center text-white hover:bg-[#350D36] rounded transition-colors duration-150"
               >
-                <MessageSquare className="h-5 w-5" />
+                <MessageSquare className="h-[18px] w-[18px]" />
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">
@@ -250,9 +257,9 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <Link
                 href="/mentions"
-                className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded"
+                className="w-10 h-10 flex items-center justify-center text-white hover:bg-[#350D36] rounded transition-colors duration-150"
               >
-                <Bell className="h-5 w-5" />
+                <Bell className="h-[18px] w-[18px]" />
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">
@@ -264,8 +271,8 @@ export function Sidebar() {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="w-9 h-9 flex items-center justify-center text-white hover:bg-[#350D36] rounded">
-                <MoreVertical className="h-5 w-5" />
+              <button className="w-10 h-10 flex items-center justify-center text-white hover:bg-[#350D36] rounded transition-colors duration-150">
+                <MoreVertical className="h-[18px] w-[18px]" />
               </button>
             </TooltipTrigger>
             <TooltipContent side="right">
@@ -277,21 +284,21 @@ export function Sidebar() {
         {/* ワークスペース追加ボタン */}
         <Link
           href="/workspace/create"
-          className="mt-auto w-9 h-9 rounded flex items-center justify-center text-white bg-[#4A154B] hover:bg-[#4C9689] transition-all duration-200 hover:rounded-lg"
+          className="mt-auto w-10 h-10 rounded flex items-center justify-center text-white bg-[#4A154B] hover:bg-[#4C9689] transition-all duration-200 hover:rounded-lg"
         >
-          <Plus className="h-5 w-5" />
+          <Plus className="h-[18px] w-[18px]" />
         </Link>
       </div>
 
       {/* メインサイドバー - チャンネル一覧など */}
-      <div className="w-56 flex flex-col h-full text-white bg-[#3F0E40]">
+      <div className="w-60 flex flex-col h-full text-white bg-[#3F0E40] px-4">
         {/* ワークスペースヘッダー */}
-        <div className="flex items-center justify-between p-3 hover:bg-[#350D36] cursor-pointer border-b border-[#522653] mb-2">
+        <div className="flex items-center justify-between py-4 hover:bg-[#350D36] cursor-pointer border-b border-[#522653] mb-4 -mx-4 px-4">
           <div className="flex items-center">
             <h2 className="font-bold text-white">
               {currentWorkspace?.name || "SlackClone"}
             </h2>
-            <ChevronDown className="h-4 w-4 ml-1" />
+            <ChevronDown className="h-[18px] w-[18px] ml-2" />
           </div>
           <TooltipProvider>
             <Tooltip>
@@ -302,7 +309,7 @@ export function Sidebar() {
                   className="text-white hover:bg-[#350D36] rounded-full p-1"
                 >
                   <span className="sr-only">New message</span>
-                  <PlusCircle className="h-5 w-5" />
+                  <PlusCircle className="h-[18px] w-[18px]" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -313,15 +320,15 @@ export function Sidebar() {
         </div>
 
         {/* 検索ボタン - Slackのジャンプボタン */}
-        <button className="mx-3 mb-3 flex items-center h-8 px-3 rounded border border-[#565856] text-[#BCABBC] text-sm hover:bg-[#350D36] hover:border-[#350D36] hover:text-white">
-          <Search className="h-3.5 w-3.5 mr-2" />
+        <button className="mb-4 flex items-center h-9 px-3 rounded border border-[#565856] text-[#BCABBC] text-sm hover:bg-[#350D36] hover:border-[#350D36] hover:text-white transition-colors duration-150">
+          <Search className="h-[18px] w-[18px] mr-2" />
           <span>Search {currentWorkspace?.name}</span>
         </button>
 
         {/* プロモーション */}
-        <div className="mx-3 mb-3 bg-[#4A154B] rounded p-2 text-sm">
+        <div className="mb-4 bg-[#4A154B] rounded p-3 text-sm">
           <div className="flex items-center">
-            <PlusCircle className="h-4 w-4 mr-2" />
+            <PlusCircle className="h-[18px] w-[18px] mr-2" />
             <span className="font-medium">Get 50% Off Slack</span>
           </div>
           <div className="text-xs text-[#BCABBC] mt-1">
@@ -330,35 +337,35 @@ export function Sidebar() {
         </div>
 
         {/* Slackのメインナビゲーション - ThreadsとHuddles */}
-        <div className="px-3 space-y-1 mb-3">
+        <div className="space-y-2 mb-4">
           <Link
             href="/threads"
-            className="flex items-center p-1.5 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+            className="flex items-center py-2 px-2 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
           >
-            <MessageCircle className="h-4 w-4 mr-2" />
+            <MessageCircle className="h-[18px] w-[18px] mr-2" />
             <span className="text-sm">Threads</span>
           </Link>
           <Link
             href="/huddles"
-            className="flex items-center p-1.5 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+            className="flex items-center py-2 px-2 rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
           >
-            <Headphones className="h-4 w-4 mr-2" />
+            <Headphones className="h-[18px] w-[18px] mr-2" />
             <span className="text-sm">Huddles</span>
           </Link>
         </div>
 
         {/* チャンネルセクション */}
-        <div className="flex-1 overflow-y-auto px-2">
+        <div className="flex-1 overflow-y-auto hide-scrollbar hover-scrollbar">
           <Collapsible
             open={channelsOpen}
-            onOpenChange={setChannelsOpen}
-            className="mb-2"
+            onOpenChange={toggleChannels}
+            className="mb-4"
           >
-            <div className="flex items-center justify-between px-2 py-1.5">
+            <div className="flex items-center justify-between py-2 group">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center text-xs font-medium text-[#BCABBC] hover:text-white">
+                <button className="flex items-center text-xs font-medium uppercase text-[#BCABBC] group-hover:text-white transition-colors duration-150">
                   <ChevronDown
-                    className={`h-3 w-3 mr-1 transition-transform ${
+                    className={`h-[18px] w-[18px] mr-1 transition-transform duration-200 ${
                       channelsOpen ? "" : "transform -rotate-90"
                     }`}
                   />
@@ -371,9 +378,9 @@ export function Sidebar() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-5 w-5 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white"
+                    className="h-6 w-6 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white transition-colors duration-150"
                   >
-                    <Plus className="h-3.5 w-3.5" />
+                    <Plus className="h-[18px] w-[18px]" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="bg-[#1A1D21] border-[#2F3136] text-white sm:max-w-[425px]">
@@ -404,7 +411,7 @@ export function Sidebar() {
               </Dialog>
             </div>
 
-            <CollapsibleContent className="space-y-0.5">
+            <CollapsibleContent className="space-y-1 mt-1">
               {channels.length > 0 ? (
                 channels.map((channel) => (
                   <Link
@@ -414,9 +421,9 @@ export function Sidebar() {
                         ? `/workspace/${params.workspaceId}/channel/${channel.id}`
                         : `/channel/${channel.id}`
                     }
-                    className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                    className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
                   >
-                    <Hash className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                    <Hash className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                     <span>{channel.name}</span>
                   </Link>
                 ))
@@ -428,9 +435,9 @@ export function Sidebar() {
                         ? `/workspace/${params.workspaceId}/channel/general`
                         : "/channel/general"
                     }
-                    className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                    className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
                   >
-                    <Hash className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                    <Hash className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                     <span>general</span>
                   </Link>
                   <Link
@@ -439,34 +446,30 @@ export function Sidebar() {
                         ? `/workspace/${params.workspaceId}/channel/random`
                         : "/channel/random"
                     }
-                    className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                    className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
                   >
-                    <Hash className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                    <Hash className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                     <span>random</span>
                   </Link>
                 </>
               )}
               <Link
                 href="#"
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <Plus className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                 <span>Add channels</span>
               </Link>
             </CollapsibleContent>
           </Collapsible>
 
           {/* DMsセクション */}
-          <Collapsible
-            open={dmsOpen}
-            onOpenChange={setDmsOpen}
-            className="mb-2"
-          >
-            <div className="flex items-center justify-between px-2 py-1.5">
+          <Collapsible open={dmsOpen} onOpenChange={toggleDMs} className="mb-4">
+            <div className="flex items-center justify-between py-2 group">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center text-xs font-medium text-[#BCABBC] hover:text-white">
+                <button className="flex items-center text-xs font-medium uppercase text-[#BCABBC] group-hover:text-white transition-colors duration-150">
                   <ChevronDown
-                    className={`h-3 w-3 mr-1 transition-transform ${
+                    className={`h-[18px] w-[18px] mr-1 transition-transform duration-200 ${
                       dmsOpen ? "" : "transform -rotate-90"
                     }`}
                   />
@@ -476,22 +479,22 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white"
+                className="h-6 w-6 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-[18px] w-[18px]" />
               </Button>
             </div>
 
-            <CollapsibleContent className="space-y-0.5">
+            <CollapsibleContent className="space-y-1 mt-1">
               <Link
                 href={
                   params.workspaceId
                     ? `/workspace/${params.workspaceId}/dm/slackbot`
                     : "/dm/slackbot"
                 }
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <span className="w-3.5 h-3.5 bg-green-500 rounded-full mr-2"></span>
+                <span className="w-[18px] h-[18px] bg-green-500 rounded-full mr-2 flex-shrink-0"></span>
                 <span>Slackbot</span>
               </Link>
               <Link
@@ -500,16 +503,16 @@ export function Sidebar() {
                     ? `/workspace/${params.workspaceId}/dm/you`
                     : "/dm/you"
                 }
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <span className="w-3.5 h-3.5 bg-yellow-500 rounded-full mr-2"></span>
+                <span className="w-[18px] h-[18px] bg-yellow-500 rounded-full mr-2 flex-shrink-0"></span>
                 <span>you</span>
               </Link>
               <Link
                 href="#"
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <Plus className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                 <span>Add coworkers</span>
               </Link>
             </CollapsibleContent>
@@ -518,14 +521,14 @@ export function Sidebar() {
           {/* Appsセクション */}
           <Collapsible
             open={appsOpen}
-            onOpenChange={setAppsOpen}
-            className="mb-2"
+            onOpenChange={toggleApps}
+            className="mb-4"
           >
-            <div className="flex items-center justify-between px-2 py-1.5">
+            <div className="flex items-center justify-between py-2 group">
               <CollapsibleTrigger asChild>
-                <button className="flex items-center text-xs font-medium text-[#BCABBC] hover:text-white">
+                <button className="flex items-center text-xs font-medium uppercase text-[#BCABBC] group-hover:text-white transition-colors duration-150">
                   <ChevronDown
-                    className={`h-3 w-3 mr-1 transition-transform ${
+                    className={`h-[18px] w-[18px] mr-1 transition-transform duration-200 ${
                       appsOpen ? "" : "transform -rotate-90"
                     }`}
                   />
@@ -535,29 +538,29 @@ export function Sidebar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-5 w-5 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white"
+                className="h-6 w-6 rounded hover:bg-[#350D36] p-0 text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-[18px] w-[18px]" />
               </Button>
             </div>
 
-            <CollapsibleContent className="space-y-0.5">
+            <CollapsibleContent className="space-y-1 mt-1">
               <Link
                 href={
                   params.workspaceId
                     ? `/workspace/${params.workspaceId}/app/slackbot`
                     : "/app/slackbot"
                 }
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <span className="w-3.5 h-3.5 bg-purple-500 rounded-full mr-2"></span>
+                <span className="w-[18px] h-[18px] bg-purple-500 rounded-full mr-2 flex-shrink-0"></span>
                 <span>Slackbot</span>
               </Link>
               <Link
                 href="#"
-                className="flex items-center pl-5 pr-2 py-1 text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white"
+                className="flex items-center pl-6 pr-2 py-[6px] text-sm rounded hover:bg-[#350D36] text-[#BCABBC] hover:text-white transition-colors duration-150"
               >
-                <Plus className="h-3.5 w-3.5 mr-2 text-[#BCABBC]" />
+                <Plus className="h-[18px] w-[18px] mr-2 text-[#BCABBC]" />
                 <span>Add apps</span>
               </Link>
             </CollapsibleContent>

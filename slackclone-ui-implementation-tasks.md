@@ -3,25 +3,25 @@
 ## Sidebar Enhancement
 
 ### Task 1: Update `components/layout/sidebar.tsx`
-- [ ] Change background color to #3F0E40
-- [ ] Adjust padding to 16px for container, 8px between items
-- [ ] Update hover states to use lighten background color
-- [ ] Standardize icon sizes to 18px
-- [ ] Add proper left padding for nested items
+- [x] Change background color to #3F0E40
+- [x] Adjust padding to 16px for container, 8px between items
+- [x] Update hover states to use lighten background color
+- [x] Standardize icon sizes to 18px
+- [x] Add proper left padding for nested items
 
 ### Task 2: Improve Collapsible Sections
-- [ ] Add proper chevron icons to section headers
-- [ ] Implement smooth rotation animation for expand/collapse
-- [ ] Add localStorage persistence for section expanded state
-- [ ] Style section headers with uppercase and lighter color text
-- [ ] Add proper spacing between sections (16px)
+- [x] Add proper chevron icons to section headers
+- [x] Implement smooth rotation animation for expand/collapse
+- [x] Add localStorage persistence for section expanded state
+- [x] Style section headers with uppercase and lighter color text
+- [x] Add proper spacing between sections (16px)
 
 ### Task 3: Enhance `components/channels/channel-list.tsx`
-- [ ] Update channel items to include proper # icon
-- [ ] Add hover effect matching Slack's design
-- [ ] Fix spacing between channel items
-- [ ] Style active channel with proper background highlight
-- [ ] Improve "Add channels" button styling
+- [x] Update channel items to include proper # icon
+- [x] Add hover effect matching Slack's design
+- [x] Fix spacing between channel items
+- [x] Style active channel with proper background highlight
+- [x] Improve "Add channels" button styling
 
 ## Channel View Improvements
 

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <div className="max-w-4xl mx-auto">
@@ -13,9 +15,9 @@ export default function HomePage() {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               View and manage your workspaces
             </p>
-            <a href="/workspaces" className="text-blue-600 hover:underline">
+            <Link href="/workspaces" className="text-blue-600 hover:underline">
               Browse workspaces →
-            </a>
+            </Link>
           </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
@@ -23,12 +25,12 @@ export default function HomePage() {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Start a new workspace for your team
             </p>
-            <a
+            <Link
               href="/workspaces/create"
               className="text-blue-600 hover:underline"
             >
               Create workspace →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FileItem } from "@/components/files/file-item";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,20 +16,30 @@ type FileView = "all" | "channel" | "my";
 type SortOption = "date" | "name" | "size";
 type SortDirection = "asc" | "desc";
 
+interface FileData {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+  createdAt: Date | string;
+  // Add any other properties your files have
+}
+
 interface FileBrowserProps {
   workspaceId: string;
   channelId?: string;
 }
 
 export function FileBrowser({ workspaceId, channelId }: FileBrowserProps) {
-  const [files, setFiles] = useState<any[]>([]);
+  const [files, setFiles] = useState<FileData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [view, setView] = useState<FileView>(channelId ? "channel" : "all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
-  const loadFiles = async () => {
+  const loadFiles = useCallback(async () => {
     setIsLoading(true);
     try {
       let result;
@@ -54,10 +64,11 @@ export function FileBrowser({ workspaceId, channelId }: FileBrowserProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [workspaceId, channelId, view]);
+
   useEffect(() => {
     loadFiles();
-  }, [workspaceId, channelId, view]);
+  }, [loadFiles]);
 
   const handleDelete = () => {
     loadFiles();
@@ -71,7 +82,7 @@ export function FileBrowser({ workspaceId, channelId }: FileBrowserProps) {
     setSortDirection(sortDirection === "asc" ? "desc" : "asc");
   };
 
-  const sortFiles = (files: any[]) => {
+  const sortFiles = (files: FileData[]) => {
     return [...files].sort((a, b) => {
       let comparison = 0;
 

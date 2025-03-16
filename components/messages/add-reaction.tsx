@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { POPULAR_EMOJIS } from "@/lib/constants";
 
 type AddReactionProps = {
-  messageId: string;
+  /* messageId: string; */
   onReactionSelect: (emoji: string) => void;
   onClose: () => void;
 };
 
 export function AddReaction({
-  messageId,
+  /* messageId, */
   onReactionSelect,
   onClose,
 }: AddReactionProps) {

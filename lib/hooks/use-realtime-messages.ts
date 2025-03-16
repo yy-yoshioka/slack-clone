@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { getMessages } from "@/lib/actions/message-actions";
+import { Message } from "../../types/message";
 
 export function useRealtimeMessages(channelId: string) {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const supabase = createClient();

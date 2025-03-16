@@ -208,7 +208,7 @@ export default async function ChannelPage({ params }: ChannelPageProps) {
           </div>
 
           {/* Actual Messages would be loaded here */}
-          <div className="flex-1 overflow-y-auto px-4">
+          <div className="flex-1 overflow-y-auto px-4 hide-scrollbar hover-scrollbar">
             <MessageList channelId={params.channelId} />
           </div>
 

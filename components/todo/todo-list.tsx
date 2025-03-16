@@ -13,8 +13,8 @@ export function TodoList() {
       <div className="mb-8">
         <h1 className="text-2xl font-semibold mb-2">To-do list</h1>
         <p className="text-muted-foreground">
-          This is your space. We've added a few things to help get you started,
-          but feel free to use this canvas however you'd like.
+          This is your space. We&apos;ve added a few things to help get you
+          started, but feel free to use this canvas however you&apos;d like.
         </p>
       </div>
 
