@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { POPULAR_EMOJIS } from "@/lib/constants";
 
 type AddReactionProps = {
-  /* messageId: string; */
-  onReactionSelect: (emoji: string) => void;
+  messageId: string;
+  onSelect: (emoji: string) => void;
   onClose: () => void;
 };
 
 export function AddReaction({
-  /* messageId, */
-  onReactionSelect,
+  // messageId not used in component but required in AddReactionProps
+  onSelect,
   onClose,
 }: AddReactionProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -34,7 +34,7 @@ export function AddReaction({
   return (
     <div
       ref={ref}
-      className="absolute bottom-full left-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 z-10"
+      className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-2 z-10 w-64"
     >
       <div className="flex flex-wrap gap-1 max-w-[300px]">
         {POPULAR_EMOJIS.map((emoji) => (
@@ -42,9 +42,9 @@ export function AddReaction({
             key={emoji}
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={() => {
-              onReactionSelect(emoji);
+              onSelect(emoji);
               onClose();
             }}
           >

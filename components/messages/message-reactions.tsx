@@ -10,9 +10,10 @@ import {
 import { AddReaction } from "@/components/messages/add-reaction";
 import { toggleReaction } from "@/lib/actions/reaction-actions";
 import { useToast } from "@/components/ui/use-toast";
-import { PlusCircle } from "lucide-react";
+import { SmileIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getUserInitials } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type ReactionUser = {
   id: string;
@@ -44,24 +45,18 @@ export function MessageReactions({
 
   const handleReactionClick = async (emoji: string) => {
     try {
-      console.log(
-        `Attempting to toggle reaction: ${emoji} on message: ${messageId}`
-      );
       const result = await toggleReaction(messageId, emoji);
-      console.log("Toggle reaction result:", result);
 
       if (result.success) {
         onReactionUpdate?.();
       } else {
-        console.error("Failed to toggle reaction:", result.error);
         toast({
           title: "Error",
           description: result.error || "Failed to toggle reaction",
           variant: "destructive",
         });
       }
-    } catch (error) {
-      console.error("Exception when toggling reaction:", error);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to toggle reaction",
@@ -71,25 +66,35 @@ export function MessageReactions({
   };
 
   return (
-    <div className="flex flex-wrap gap-1 mt-2">
+    <div className="flex flex-wrap gap-1.5 mt-2">
       {Object.entries(reactions).map(([emoji, data]) => (
         <HoverCard key={emoji} openDelay={300} closeDelay={100}>
           <HoverCardTrigger asChild>
             <Button
-              variant={data.hasReacted ? "secondary" : "outline"}
+              variant="ghost"
               size="sm"
-              className="h-7 px-2 text-xs rounded-full"
+              className={cn(
+                "h-6 px-2 text-xs rounded-full border transition-all duration-150",
+                data.hasReacted
+                  ? "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-700 hover:dark:bg-blue-900/50"
+                  : "bg-gray-50 hover:bg-gray-100 border-gray-200 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+              )}
               onClick={() => handleReactionClick(emoji)}
             >
-              {emoji} <span className="ml-1">{data.count}</span>
+              {emoji} <span className="ml-1 font-medium">{data.count}</span>
             </Button>
           </HoverCardTrigger>
-          <HoverCardContent className="w-56 p-2" align="start">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Reacted with {emoji}</p>
-              <div className="flex flex-col gap-2">
+          <HoverCardContent className="w-60 p-3" align="start">
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <div className="mr-2 text-lg">{emoji}</div>
+                <p className="text-sm font-medium">
+                  {data.count} {data.count === 1 ? "reaction" : "reactions"}
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 max-h-[180px] overflow-y-auto">
                 {data.users.map((user) => (
-                  <div key={user.id} className="flex items-center gap-2">
+                  <div key={user.id} className="flex items-center gap-2 py-1">
                     <Avatar className="h-6 w-6">
                       {user.imageUrl ? (
                         <AvatarImage
@@ -102,7 +107,12 @@ export function MessageReactions({
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    <span className="text-xs">{user.name || "Anonymous"}</span>
+                    <span className="text-sm">{user.name || "Anonymous"}</span>
+                    {data.users[0]?.id === user.id && (
+                      <span className="text-xs text-gray-500 ml-auto">
+                        First reaction
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -111,24 +121,27 @@ export function MessageReactions({
         </HoverCard>
       ))}
 
-      <div className="relative">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-7 w-7 p-0 rounded-full"
-          onClick={() => setIsPickerOpen(!isPickerOpen)}
-        >
-          <PlusCircle className="h-4 w-4" />
-        </Button>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-6 px-2 text-xs rounded-full border border-dashed border-gray-300 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-800 group"
+        onClick={() => setIsPickerOpen(!isPickerOpen)}
+      >
+        <SmileIcon className="h-3.5 w-3.5 mr-1 text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300" />
+        <span className="text-gray-500 group-hover:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-300">
+          Add
+        </span>
+      </Button>
 
-        {isPickerOpen && (
+      {isPickerOpen && (
+        <div className="absolute z-10 mt-1">
           <AddReaction
             messageId={messageId}
-            onReactionSelect={handleReactionClick}
+            onSelect={handleReactionClick}
             onClose={() => setIsPickerOpen(false)}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
