@@ -49,18 +49,18 @@
 ## Message Input Enhancement
 
 ### Task 7: Update `components/messages/message-input.tsx`
-- [ ] Change input shape to pill design with proper padding
-- [ ] Add formatting toolbar with consistent icon styling
-- [ ] Implement auto-expanding behavior for text input
-- [ ] Update attachment button styling with upload icon
-- [ ] Style send button with paper airplane icon
+- [x] Change input shape to pill design with proper padding
+- [x] Add formatting toolbar with consistent icon styling
+- [x] Implement auto-expanding behavior for text input
+- [x] Update attachment button styling with upload icon
+- [x] Style send button with paper airplane icon
 
 ### Task 8: Add Formatting Options
-- [ ] Add bold, italic, strikethrough buttons
-- [ ] Implement code and link formatting buttons
-- [ ] Add bulleted and numbered list options
-- [ ] Include emoji picker button with proper styling
-- [ ] Add code block formatting option
+- [x] Add bold, italic, strikethrough buttons
+- [x] Implement code and link formatting buttons
+- [x] Add bulleted and numbered list options
+- [x] Include emoji picker button with proper styling
+- [x] Add code block formatting option
 
 ## General UI Elements
 

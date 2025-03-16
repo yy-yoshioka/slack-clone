@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Paperclip } from "lucide-react";
@@ -9,9 +9,15 @@ import { createClient } from "@/lib/supabase/client";
 
 type FileUploadProps = {
   onFileUpload: (url: string, name: string, size: number, type: string) => void;
+  onUploading?: (isUploading: boolean) => void;
+  showButton?: boolean;
 };
 
-export function FileUpload({ onFileUpload }: FileUploadProps) {
+export function FileUpload({
+  onFileUpload,
+  onUploading,
+  showButton = true,
+}: FileUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
@@ -27,6 +33,8 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
     }
 
     setIsUploading(true);
+    onUploading?.(true);
+
     try {
       // Generate a unique file path with timestamp and random string
       const fileExt = file.name.split(".").pop();
@@ -74,7 +82,12 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
       );
     } finally {
       setIsUploading(false);
+      onUploading?.(false);
     }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -86,16 +99,18 @@ export function FileUpload({ onFileUpload }: FileUploadProps) {
         onChange={handleFileChange}
         accept="image/*,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       />
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => fileInputRef.current?.click()}
-        disabled={isUploading}
-      >
-        <Paperclip className="h-4 w-4 mr-2" />
-        {isUploading ? "Uploading..." : "Attach"}
-      </Button>
+      {showButton && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={triggerFileInput}
+          disabled={isUploading}
+        >
+          <Paperclip className="h-4 w-4 mr-2" />
+          {isUploading ? "Uploading..." : "Attach"}
+        </Button>
+      )}
     </div>
   );
 }
