@@ -65,32 +65,32 @@
 ## General UI Elements
 
 ### Task 9: Fix `app/(main)/layout.tsx`
-- [ ] Update overall spacing and layout
-- [ ] Fix header to top of viewport
-- [ ] Ensure proper content scrolling behavior
-- [ ] Add separator between sidebar and main content
-- [ ] Fix z-index issues for overlapping elements
+- [x] Update overall spacing and layout
+- [x] Fix header to top of viewport
+- [x] Ensure proper content scrolling behavior
+- [x] Add separator between sidebar and main content
+- [x] Fix z-index issues for overlapping elements
 
 ### Task 10: Improve `components/messages/message-list.tsx`
-- [ ] Update message spacing (16px between groups)
-- [ ] Add date separators with proper styling
-- [ ] Implement "New messages" indicator when applicable
-- [ ] Ensure consistent avatar display size and position
-- [ ] Fix message alignment and padding
+- [x] Update message spacing (16px between groups)
+- [x] Add date separators with proper styling
+- [x] Implement "New messages" indicator when applicable
+- [x] Ensure consistent avatar display size and position
+- [x] Fix message alignment and padding
 
 ### Task 11: Create Notification Banner
-- [ ] Create new banner component for notifications
-- [ ] Position at bottom of screen with proper z-index
-- [ ] Add bell icon and explanatory text
-- [ ] Include dismiss (X) button
-- [ ] Add "Enable notifications" action button
+- [x] Create new banner component for notifications
+- [x] Position at bottom of screen with proper z-index
+- [x] Add bell icon and explanatory text
+- [x] Include dismiss (X) button
+- [x] Add "Enable notifications" action button
 
 ### Task 12: Update Empty States
-- [ ] Create empty state for new channels
-- [ ] Add conversation starter buttons/suggestions
-- [ ] Style with proper vertical spacing and alignment
-- [ ] Include explanatory text matching Slack's tone
-- [ ] Add light illustrations if appropriate
+- [x] Create empty state for new channels
+- [x] Add conversation starter buttons/suggestions
+- [x] Style with proper vertical spacing and alignment
+- [x] Include explanatory text matching Slack's tone
+- [x] Add light illustrations if appropriate
 
 ## Message Formatting Improvements
 
